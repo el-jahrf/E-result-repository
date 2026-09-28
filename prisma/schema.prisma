@@ -7,18 +7,18 @@ datasource db {
 }
 
 model User {
-  id           String     @id @default(cuid())
-  email        String     @unique
-  passwordHash String
-  role         UserRole
-  isActive     Boolean    @default(true)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  auditLogs    AuditLog[]
-  student      Student?
-  teacher      Teacher?
-
-  @@index([role])
+  id               String     @id @default(cuid())
+  email            String     @unique
+  passwordHash     String
+  role             UserRole
+  isActive         Boolean    @default(true)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  signatureData    String?
+  profileCompleted Boolean    @default(false)
+  auditLogs        AuditLog[]
+  student          Student?
+  teacher          Teacher?
 }
 
 model Student {
@@ -33,129 +33,187 @@ model Student {
   isActive    Boolean      @default(true)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  photoData   String?
   assignments Assignment[]
   enrollments Enrollment[]
   results     Result[]
+  resultPins  ResultPin[]
   user        User?        @relation(fields: [userId], references: [id])
 
   @@index([lastName, firstName])
 }
 
 model Teacher {
-  id             String              @id @default(cuid())
-  userId         String              @unique
-  staffNo        String              @unique
-  firstName      String
-  lastName       String
-  isActive       Boolean             @default(true)
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
-  createdResults Result[]
-  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  assignments    TeacherAssignment[]
+  id                     String                  @id @default(cuid())
+  userId                 String                  @unique
+  staffNo                String                  @unique
+  firstName              String
+  lastName               String
+  isActive               Boolean                 @default(true)
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  signatureUrl           String?
+  signatureData          String?
+  classMasterAssignments ClassMasterAssignment[]
+  createdResults         Result[]
+  user                   User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignments            TeacherAssignment[]
 
   @@index([lastName, firstName])
 }
 
 model Class {
-  id          String              @id @default(cuid())
-  name        String
-  level       String
-  arm         String?
-  stream      String?
-  isActive    Boolean             @default(true)
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  enrollments Enrollment[]
-  results     Result[]
-  assignments TeacherAssignment[]
+  id                     String                  @id @default(cuid())
+  name                   String
+  level                  String
+  arm                    String?
+  stream                 String?
+  isActive               Boolean                 @default(true)
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  section                SchoolSection
+  classMasterAssignments ClassMasterAssignment[]
+  classSubjects          ClassSubject[]
+  enrollments            Enrollment[]
+  results                Result[]
+  assignments            TeacherAssignment[]
 
   @@unique([name, arm])
+  @@index([section, level])
 }
 
 model Subject {
-  id          String              @id @default(cuid())
-  code        String              @unique
-  name        String
-  type        SubjectType         @default(CORE)
-  isActive    Boolean             @default(true)
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  results     Result[]
-  assignments TeacherAssignment[]
+  id            String              @id @default(cuid())
+  code          String              @unique
+  name          String
+  type          SubjectType         @default(CORE)
+  isActive      Boolean             @default(true)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  section       SchoolSection?
+  classSubjects ClassSubject[]
+  results       Result[]
+  assignments   TeacherAssignment[]
+
+  @@index([section])
+}
+
+model ClassSubject {
+  id        String   @id @default(cuid())
+  classId   String
+  subjectId String
+  createdAt DateTime @default(now())
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([classId, subjectId])
+  @@index([classId])
+  @@index([subjectId])
 }
 
 model AcademicSession {
-  id          String       @id @default(cuid())
-  name        String       @unique
-  startDate   DateTime
-  endDate     DateTime
-  isCurrent   Boolean      @default(false)
-  createdAt   DateTime     @default(now())
-  enrollments Enrollment[]
-  results     Result[]
+  id                     String                  @id @default(cuid())
+  name                   String                  @unique
+  startDate              DateTime
+  endDate                DateTime
+  isCurrent              Boolean                 @default(false)
+  currentTerm            Term                    @default(FIRST)
+  createdAt              DateTime                @default(now())
+  classMasterAssignments ClassMasterAssignment[]
+  enrollments            Enrollment[]
+  results                Result[]
+  resultPins             ResultPin[]
+  TeacherAssignment      TeacherAssignment[]
 }
 
 model Enrollment {
-  id        String          @id @default(cuid())
-  studentId String
-  classId   String
-  sessionId String
-  term      Term
-  createdAt DateTime        @default(now())
-  class     Class           @relation(fields: [classId], references: [id])
-  session   AcademicSession @relation(fields: [sessionId], references: [id])
-  student   Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  results   Result[]
+  id                   String          @id @default(cuid())
+  studentId            String
+  classId              String
+  sessionId            String
+  term                 Term
+  createdAt            DateTime        @default(now())
+  attendanceAbsent     Int?
+  attendanceOpened     Int?
+  attendancePercentage Decimal?        @db.Decimal(5, 2)
+  attendancePresent    Int?
+  class                Class           @relation(fields: [classId], references: [id])
+  session              AcademicSession @relation(fields: [sessionId], references: [id])
+  student              Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  results              Result[]
+  TermSummary          TermSummary?
 
   @@unique([studentId, sessionId, term])
   @@index([classId, sessionId, term])
 }
 
 model TeacherAssignment {
-  id        String   @id @default(cuid())
-  teacherId String
-  classId   String
-  subjectId String
-  sessionId String
-  term      Term
-  createdAt DateTime @default(now())
-  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
-  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  teacher   Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-
-  @@unique([teacherId, classId, subjectId, sessionId, term])
-  @@index([classId, subjectId, sessionId, term])
-}
-
-model Result {
   id              String          @id @default(cuid())
-  studentId       String
-  enrollmentId    String
+  teacherId       String
   classId         String
   subjectId       String
   sessionId       String
   term            Term
-  caScore         Decimal         @db.Decimal(5, 2)
-  examScore       Decimal         @db.Decimal(5, 2)
-  totalScore      Decimal         @db.Decimal(5, 2)
-  grade           String?
-  remark          String?
-  position        Int?
-  classAverage    Decimal?        @db.Decimal(5, 2)
-  performanceRate Decimal?        @db.Decimal(5, 2)
-  status          ApprovalStatus  @default(DRAFT)
-  enteredById     String?
-  approvedAt      DateTime?
-  publishedAt     DateTime?
   createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  class           Class           @relation(fields: [classId], references: [id])
-  enrollment      Enrollment      @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
-  teacher         Teacher?        @relation(fields: [enteredById], references: [id])
-  session         AcademicSession @relation(fields: [sessionId], references: [id])
-  student         Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  subject         Subject         @relation(fields: [subjectId], references: [id])
+  class           Class           @relation(fields: [classId], references: [id], onDelete: Cascade)
+  AcademicSession AcademicSession @relation(fields: [sessionId], references: [id])
+  subject         Subject         @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacher         Teacher         @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, classId, subjectId, sessionId, term])
+  @@index([classId, subjectId, sessionId, term])
+  @@index([teacherId, sessionId, term])
+}
+
+model ClassMasterAssignment {
+  id        String          @id @default(cuid())
+  teacherId String
+  classId   String
+  sessionId String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  class     Class           @relation(fields: [classId], references: [id], onDelete: Cascade)
+  session   AcademicSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  teacher   Teacher         @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, classId, sessionId])
+  @@index([teacherId, sessionId])
+  @@index([classId, sessionId])
+}
+
+model Result {
+  id                          String          @id @default(cuid())
+  studentId                   String
+  enrollmentId                String
+  classId                     String
+  subjectId                   String
+  sessionId                   String
+  term                        Term
+  examScore                   Decimal?        @db.Decimal(5, 2)
+  totalScore                  Decimal?        @db.Decimal(5, 2)
+  grade                       String?
+  remark                      String?
+  position                    Int?
+  classAverage                Decimal?        @db.Decimal(5, 2)
+  performanceRate             Decimal?        @db.Decimal(5, 2)
+  status                      ApprovalStatus  @default(DRAFT)
+  enteredById                 String?
+  approvedAt                  DateTime?
+  publishedAt                 DateTime?
+  createdAt                   DateTime        @default(now())
+  updatedAt                   DateTime        @updatedAt
+  ca1Score                    Decimal?        @db.Decimal(5, 2)
+  ca2Score                    Decimal?        @db.Decimal(5, 2)
+  caTotal                     Decimal?        @db.Decimal(5, 2)
+  lowestInClass               Decimal?        @db.Decimal(5, 2)
+  teacherSignatureSnapshotUrl String?
+  teacherRemark               String?
+  class                       Class           @relation(fields: [classId], references: [id])
+  enrollment                  Enrollment      @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  teacher                     Teacher?        @relation(fields: [enteredById], references: [id])
+  session                     AcademicSession @relation(fields: [sessionId], references: [id])
+  student                     Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject                     Subject         @relation(fields: [subjectId], references: [id])
 
   @@unique([studentId, subjectId, sessionId, term])
   @@index([classId, subjectId, sessionId, term])
@@ -187,6 +245,15 @@ model Assignment {
   student     Student?  @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
 
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model AuditLog {
   id        String   @id @default(cuid())
   userId    String?
@@ -200,6 +267,63 @@ model AuditLog {
   @@index([userId])
   @@index([entity, entityId])
   @@index([createdAt])
+}
+
+model ResultPin {
+  id        String          @id @default(cuid())
+  pin       String          @unique
+  sessionId String
+  term      Term
+  maxUses   Int             @default(5)
+  usedCount Int             @default(0)
+  isActive  Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  studentId String
+  session   AcademicSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student   Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, sessionId, term])
+  @@index([sessionId, term])
+  @@index([isActive])
+}
+
+model AffectiveRatingRecord {
+  id            String      @id
+  termSummaryId String
+  item          String
+  rating        Int
+  createdAt     DateTime    @default(now())
+  TermSummary   TermSummary @relation(fields: [termSummaryId], references: [id], onDelete: Cascade)
+
+  @@unique([termSummaryId, item])
+  @@index([termSummaryId])
+}
+
+model TermSummary {
+  id                        String                  @id
+  enrollmentId              String                  @unique
+  overallTotal              Decimal?                @db.Decimal(7, 2)
+  average                   Decimal?                @db.Decimal(5, 2)
+  position                  Int?
+  positionOutOf             Int?
+  performanceRate           Decimal?                @db.Decimal(5, 2)
+  classScoringAverage       Decimal?                @db.Decimal(5, 2)
+  teacherComment            String?
+  headTeacherComment        String?
+  parentComment             String?
+  teacherSignedAt           DateTime?
+  headTeacherSignedAt       DateTime?
+  parentSignedAt             DateTime?
+  nextTermDate              DateTime?
+  createdAt                 DateTime                @default(now())
+  updatedAt                 DateTime                @updatedAt
+  classTeacherComment       String?
+  classTeacherSignatureData String?
+  classTeacherSignedAt      DateTime?
+  punctualityRating         Int?
+  AffectiveRatingRecord     AffectiveRatingRecord[]
+  Enrollment                Enrollment              @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
 }
 
 enum UserRole {
@@ -231,4 +355,11 @@ enum Gender {
 enum SubjectType {
   CORE
   ELECTIVE
+}
+
+enum SchoolSection {
+  NURSERY
+  PRIMARY
+  JSS
+  SS
 }

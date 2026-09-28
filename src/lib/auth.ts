@@ -7,9 +7,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
       credentials: {
-        email: {
-          label: "Email",
-          type: "email",
+        login: {
+          label: "Login ID",
+          type: "text",
         },
         password: {
           label: "Password",
@@ -18,19 +18,52 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
 
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        if (!credentials?.login || !credentials?.password) {
           return null;
         }
 
-        const email = String(credentials.email).trim().toLowerCase();
+        const login = String(credentials.login).trim();
         const password = String(credentials.password);
 
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
+        let user;
 
-        if (!user || !user.isActive) {
-          return null;
+        // Student login:
+        // Login ID = Admission Number
+        // Password = Last Name
+        if (!login.includes("@")) {
+          const student = await prisma.student.findUnique({
+            where: {
+              admissionNo: login,
+            },
+            include: {
+              user: {
+                include: {
+                  teacher: true,
+                },
+              },
+            },
+          });
+
+          if (!student?.user || !student.user.isActive || !student.isActive) {
+            return null;
+          }
+
+          user = student.user;
+        } else {
+          // Admin / Principal / Teacher login:
+          // Login ID = Email
+          user = await prisma.user.findUnique({
+            where: {
+              email: login.toLowerCase(),
+            },
+            include: {
+              teacher: true,
+            },
+          });
+
+          if (!user || !user.isActive) {
+            return null;
+          }
         }
 
         const passwordValid = await bcrypt.compare(
@@ -47,6 +80,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: user.email,
           name: user.email,
           role: user.role,
+          teacherId: user.teacher?.id,
         };
       },
     }),
@@ -60,6 +94,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
+
+        if ("teacherId" in user && user.teacherId) {
+          token.teacherId = user.teacherId;
+        }
       }
 
       return token;
@@ -69,6 +107,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.id = token.sub ?? "";
         session.user.role = token.role as string;
+        session.user.teacherId = token.teacherId as string | undefined;
       }
 
       return session;

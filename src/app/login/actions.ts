@@ -11,23 +11,23 @@ export async function loginAction(
   _previousState: LoginState,
   formData: FormData,
 ): Promise<LoginState> {
-  const email = formData.get("email");
+  const login = formData.get("login");
   const password = formData.get("password");
 
   if (
-    typeof email !== "string" ||
+    typeof login !== "string" ||
     typeof password !== "string" ||
-    !email ||
+    !login.trim() ||
     !password
   ) {
     return {
-      error: "Email and password are required.",
+      error: "Login ID and password are required.",
     };
   }
 
   try {
     await signIn("credentials", {
-      email,
+      login: login.trim(),
       password,
       redirectTo: "/",
     });
@@ -49,7 +49,7 @@ export async function loginAction(
     console.error("LOGIN ERROR:", error);
 
     return {
-      error: "Invalid email or password.",
+      error: "Invalid login ID or password.",
     };
   }
 }
