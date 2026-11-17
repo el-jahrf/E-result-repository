@@ -362,9 +362,13 @@ export default function NewTeacherPage() {
     }
   }
 
+  const inputClass =
+    "w-full min-w-0 max-w-full border border-gray-300 bg-white px-3 py-3 text-sm outline-none focus:border-gray-600";
+
   return (
-    <div className="min-h-screen bg-[#f4f5f7] text-gray-900">
-      <aside className="fixed inset-y-0 left-0 z-20 flex w-64 flex-col border-r border-gray-200 bg-white">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#f4f5f7] text-gray-900">
+      {/* Desktop sidebar */}
+      <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-gray-200 bg-white lg:flex">
         <div className="border-b border-gray-200 px-6 py-5">
           <div className="text-[15px] font-bold tracking-wide text-gray-900">
             RISING FOUNDATION
@@ -374,7 +378,7 @@ export default function NewTeacherPage() {
           </div>
         </div>
 
-        <nav className="flex-1 space-y-1 px-3 py-5">
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
           {navigation.map(([label, href]) => {
             const active = label === "Teachers";
 
@@ -405,14 +409,47 @@ export default function NewTeacherPage() {
         </div>
       </aside>
 
-      <main className="ml-64 min-h-screen">
-        <div className="border-b border-gray-200 bg-white px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight">
+      <main className="min-h-screen min-w-0 w-full lg:ml-64 lg:w-[calc(100%-16rem)]">
+        {/* Mobile navigation */}
+        <div className="border-b border-gray-200 bg-white lg:hidden">
+          <div className="border-b border-gray-100 px-4 py-3">
+            <div className="text-sm font-bold tracking-wide text-gray-900">
+              RISING FOUNDATION ACADEMY
+            </div>
+            <div className="mt-0.5 text-[10px] tracking-widest text-gray-500">
+              SCHOOL MANAGEMENT SYSTEM
+            </div>
+          </div>
+
+          <nav className="flex gap-2 overflow-x-auto px-3 py-3">
+            {navigation.map(([label, href]) => {
+              const active = label === "Teachers";
+
+              return (
+                <Link
+                  key={label}
+                  href={href}
+                  className={`shrink-0 whitespace-nowrap border px-3 py-2 text-xs font-medium ${
+                    active
+                      ? "border-gray-900 bg-gray-900 text-white"
+                      : "border-gray-200 bg-white text-gray-600"
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Page heading */}
+        <div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6 lg:px-8 lg:py-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
                 Add Teacher
               </h1>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
                 Create a teacher account, teaching assignments, and permanent
                 class responsibilities.
               </p>
@@ -420,51 +457,52 @@ export default function NewTeacherPage() {
 
             <Link
               href="/admin/teachers"
-              className="border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="inline-flex w-full items-center justify-center border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto sm:py-2"
             >
               Back to Teachers
             </Link>
           </div>
         </div>
 
-        <div className="mx-auto max-w-5xl px-8 py-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="mx-auto w-full max-w-5xl px-3 py-5 sm:px-6 sm:py-8 lg:px-8">
+          <form onSubmit={handleSubmit} className="w-full min-w-0 space-y-5 sm:space-y-6">
             {error && (
-              <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <div className="break-words border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+              <div className="break-words border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
                 {success}
               </div>
             )}
 
-            <section className="border border-gray-200 bg-white shadow-sm">
-              <div className="border-b border-gray-200 px-6 py-4">
+            {/* Teacher Information */}
+            <section className="min-w-0 border border-gray-200 bg-white shadow-sm">
+              <div className="border-b border-gray-200 px-4 py-4 sm:px-6">
                 <h2 className="text-base font-semibold">
                   Teacher Information
                 </h2>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs leading-5 text-gray-500">
                   Basic information and login credentials.
                 </p>
               </div>
 
-              <div className="grid gap-5 p-6 md:grid-cols-2">
-                <div>
+              <div className="grid min-w-0 grid-cols-1 gap-4 p-4 sm:grid-cols-2 sm:gap-5 sm:p-6">
+                <div className="min-w-0">
                   <label className="mb-1.5 block text-sm font-medium">
                     Staff Number *
                   </label>
                   <input
                     value={staffNo}
                     onChange={(e) => setStaffNo(e.target.value)}
-                    className="w-full border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-600"
+                    className={inputClass}
                     placeholder="e.g. TCH001"
                   />
                 </div>
 
-                <div>
+                <div className="min-w-0">
                   <label className="mb-1.5 block text-sm font-medium">
                     Email *
                   </label>
@@ -472,34 +510,34 @@ export default function NewTeacherPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-600"
+                    className={inputClass}
                     placeholder="teacher@school.com"
                   />
                 </div>
 
-                <div>
+                <div className="min-w-0">
                   <label className="mb-1.5 block text-sm font-medium">
                     First Name *
                   </label>
                   <input
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-600"
+                    className={inputClass}
                   />
                 </div>
 
-                <div>
+                <div className="min-w-0">
                   <label className="mb-1.5 block text-sm font-medium">
                     Last Name *
                   </label>
                   <input
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="w-full border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-600"
+                    className={inputClass}
                   />
                 </div>
 
-                <div className="md:col-span-2">
+                <div className="min-w-0 sm:col-span-2">
                   <label className="mb-1.5 block text-sm font-medium">
                     Temporary Password *
                   </label>
@@ -507,9 +545,9 @@ export default function NewTeacherPage() {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-600"
+                    className={inputClass}
                   />
-                  <p className="mt-1.5 text-xs text-gray-500">
+                  <p className="mt-1.5 text-xs leading-5 text-gray-500">
                     The teacher will be prompted to change this password and
                     create their signature when they complete their first-login
                     setup.
@@ -518,33 +556,34 @@ export default function NewTeacherPage() {
               </div>
             </section>
 
-            <section className="border border-gray-200 bg-white shadow-sm">
-              <div className="border-b border-gray-200 px-6 py-4">
+            {/* Teaching Assignments */}
+            <section className="min-w-0 border border-gray-200 bg-white shadow-sm">
+              <div className="border-b border-gray-200 px-4 py-4 sm:px-6">
                 <h2 className="text-base font-semibold">
                   Teaching Assignments
                 </h2>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs leading-5 text-gray-500">
                   Assign this teacher to the classes and subjects they teach.
                   These are subject-teaching assignments.
                 </p>
               </div>
 
-              <div className="p-6">
+              <div className="min-w-0 p-4 sm:p-6">
                 {loadingOptions ? (
                   <div className="py-8 text-center text-sm text-gray-500">
                     Loading classes, subjects and academic sessions...
                   </div>
                 ) : (
                   <>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div>
+                    <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div className="min-w-0">
                         <label className="mb-1.5 block text-sm font-medium">
                           Academic Session *
                         </label>
                         <select
                           value={sessionId}
                           onChange={(e) => setSessionId(e.target.value)}
-                          className="w-full border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-600"
+                          className={inputClass}
                         >
                           <option value="">Select session</option>
                           {sessions.map((session) => (
@@ -556,14 +595,14 @@ export default function NewTeacherPage() {
                         </select>
                       </div>
 
-                      <div>
+                      <div className="min-w-0">
                         <label className="mb-1.5 block text-sm font-medium">
                           Term *
                         </label>
                         <select
                           value={term}
                           onChange={(e) => setTerm(e.target.value)}
-                          className="w-full border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-600"
+                          className={inputClass}
                         >
                           <option value="FIRST">First Term</option>
                           <option value="SECOND">Second Term</option>
@@ -571,14 +610,14 @@ export default function NewTeacherPage() {
                         </select>
                       </div>
 
-                      <div>
+                      <div className="min-w-0">
                         <label className="mb-1.5 block text-sm font-medium">
                           Class
                         </label>
                         <select
                           value={classId}
                           onChange={(e) => setClassId(e.target.value)}
-                          className="w-full border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-600"
+                          className={inputClass}
                         >
                           <option value="">Select class</option>
                           {classes.map((item) => (
@@ -589,14 +628,14 @@ export default function NewTeacherPage() {
                         </select>
                       </div>
 
-                      <div>
+                      <div className="min-w-0">
                         <label className="mb-1.5 block text-sm font-medium">
                           Subject
                         </label>
                         <select
                           value={subjectId}
                           onChange={(e) => setSubjectId(e.target.value)}
-                          className="w-full border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-600"
+                          className={inputClass}
                         >
                           <option value="">Select subject</option>
                           {subjects.map((item) => (
@@ -612,7 +651,7 @@ export default function NewTeacherPage() {
                     <button
                       type="button"
                       onClick={addAssignment}
-                      className="mt-5 border border-gray-900 bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800"
+                      className="mt-5 w-full border border-gray-900 bg-gray-900 px-5 py-3 text-sm font-medium text-white hover:bg-gray-800 sm:w-auto sm:py-2.5"
                     >
                       + Add Teaching Assignment
                     </button>
@@ -640,15 +679,15 @@ export default function NewTeacherPage() {
                             return (
                               <div
                                 key={`${assignment.classId}-${assignment.subjectId}`}
-                                className="flex items-center justify-between border border-gray-200 bg-gray-50 px-4 py-3"
+                                className="flex min-w-0 flex-col gap-3 border border-gray-200 bg-gray-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
                               >
-                                <div>
-                                  <div className="text-sm font-medium">
+                                <div className="min-w-0">
+                                  <div className="break-words text-sm font-medium">
                                     {selectedClass
                                       ? classLabel(selectedClass)
                                       : "Unknown class"}
                                   </div>
-                                  <div className="mt-0.5 text-xs text-gray-500">
+                                  <div className="mt-0.5 break-words text-xs text-gray-500">
                                     {selectedSubject
                                       ? `${
                                           selectedSubject.code
@@ -662,7 +701,7 @@ export default function NewTeacherPage() {
                                 <button
                                   type="button"
                                   onClick={() => removeAssignment(index)}
-                                  className="text-xs font-medium text-red-600 hover:text-red-800"
+                                  className="self-start text-xs font-medium text-red-600 hover:text-red-800 sm:self-center"
                                 >
                                   Remove
                                 </button>
@@ -677,27 +716,28 @@ export default function NewTeacherPage() {
               </div>
             </section>
 
-            <section className="border border-gray-200 bg-white shadow-sm">
-              <div className="border-b border-gray-200 px-6 py-4">
+            {/* Permanent Class / Class Master */}
+            <section className="min-w-0 border border-gray-200 bg-white shadow-sm">
+              <div className="border-b border-gray-200 px-4 py-4 sm:px-6">
                 <h2 className="text-base font-semibold">
                   Permanent Class / Class Master
                 </h2>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs leading-5 text-gray-500">
                   Assign the teacher as the permanent class/form master for
                   one or more classes. This is separate from the subjects the
                   teacher teaches.
                 </p>
               </div>
 
-              <div className="p-6">
+              <div className="min-w-0 p-4 sm:p-6">
                 {loadingOptions ? (
                   <div className="py-8 text-center text-sm text-gray-500">
                     Loading academic sessions...
                   </div>
                 ) : (
                   <>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div>
+                    <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div className="min-w-0">
                         <label className="mb-1.5 block text-sm font-medium">
                           Academic Session *
                         </label>
@@ -706,7 +746,7 @@ export default function NewTeacherPage() {
                           onChange={(e) =>
                             setClassMasterSessionId(e.target.value)
                           }
-                          className="w-full border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-600"
+                          className={inputClass}
                         >
                           <option value="">Select session</option>
                           {sessions.map((session) => (
@@ -718,7 +758,7 @@ export default function NewTeacherPage() {
                         </select>
                       </div>
 
-                      <div>
+                      <div className="min-w-0">
                         <label className="mb-1.5 block text-sm font-medium">
                           Permanent Class
                         </label>
@@ -727,7 +767,7 @@ export default function NewTeacherPage() {
                           onChange={(e) =>
                             setClassMasterClassId(e.target.value)
                           }
-                          className="w-full border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-600"
+                          className={inputClass}
                         >
                           <option value="">Select permanent class</option>
                           {classes.map((item) => (
@@ -742,7 +782,7 @@ export default function NewTeacherPage() {
                     <button
                       type="button"
                       onClick={addClassMasterAssignment}
-                      className="mt-5 border border-gray-900 bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800"
+                      className="mt-5 w-full border border-gray-900 bg-gray-900 px-5 py-3 text-sm font-medium text-white hover:bg-gray-800 sm:w-auto sm:py-2.5"
                     >
                       + Add Permanent Class
                     </button>
@@ -767,16 +807,16 @@ export default function NewTeacherPage() {
                               return (
                                 <div
                                   key={assignment.classId}
-                                  className="flex items-center justify-between border border-gray-200 bg-gray-50 px-4 py-3"
+                                  className="flex min-w-0 flex-col gap-3 border border-gray-200 bg-gray-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
                                 >
-                                  <div>
-                                    <div className="text-sm font-medium">
+                                  <div className="min-w-0">
+                                    <div className="break-words text-sm font-medium">
                                       {selectedClass
                                         ? classLabel(selectedClass)
                                         : "Unknown class"}
                                     </div>
 
-                                    <div className="mt-0.5 text-xs text-gray-500">
+                                    <div className="mt-0.5 break-words text-xs text-gray-500">
                                       Class/Form Master ·{" "}
                                       {
                                         sessions.find(
@@ -793,7 +833,7 @@ export default function NewTeacherPage() {
                                     onClick={() =>
                                       removeClassMasterAssignment(index)
                                     }
-                                    className="text-xs font-medium text-red-600 hover:text-red-800"
+                                    className="self-start text-xs font-medium text-red-600 hover:text-red-800 sm:self-center"
                                   >
                                     Remove
                                   </button>
@@ -809,10 +849,11 @@ export default function NewTeacherPage() {
               </div>
             </section>
 
-            <div className="flex justify-end gap-3">
+            {/* Form actions */}
+            <div className="flex flex-col-reverse gap-3 pb-4 sm:flex-row sm:justify-end">
               <Link
                 href="/admin/teachers"
-                className="border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="inline-flex w-full items-center justify-center border border-gray-300 bg-white px-5 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto sm:py-2.5"
               >
                 Cancel
               </Link>
@@ -820,7 +861,7 @@ export default function NewTeacherPage() {
               <button
                 type="submit"
                 disabled={saving || loadingOptions}
-                className="border border-gray-900 bg-gray-900 px-6 py-2.5 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex w-full items-center justify-center border border-gray-900 bg-gray-900 px-6 py-3 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:py-2.5"
               >
                 {saving
                   ? "Creating..."

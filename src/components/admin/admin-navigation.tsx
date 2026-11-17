@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -30,6 +31,24 @@ const pagesWithExistingDesktopSidebar = [
   "/admin/results",
   "/admin/result-pins",
 ];
+
+function SchoolLogo({ size = 40 }: { size?: number }) {
+  return (
+    <span
+      className="flex shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#C8A878] bg-[#4A2C20] p-1"
+      style={{ width: size, height: size }}
+    >
+      <Image
+        src="/school-logo.png.png"
+        alt="Rising Foundation Academy logo"
+        width={size}
+        height={size}
+        priority
+        className="h-full w-full object-contain"
+      />
+    </span>
+  );
+}
 
 function Icon({ name }: { name: IconName }) {
   const common = {
@@ -190,8 +209,7 @@ export default function AdminNavigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const showSharedDesktopSidebar = !pagesWithExistingDesktopSidebar.some(
-    (path) =>
-      pathname === path || pathname.startsWith(`${path}/`)
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
   );
 
   useEffect(() => {
@@ -218,50 +236,45 @@ export default function AdminNavigation() {
 
   return (
     <>
-      {/* Mobile header: menu button on the LEFT */}
+      {/* Mobile header */}
       <header className="sticky top-0 z-40 flex min-h-16 items-center gap-3 border-b border-[#C8A878] bg-[#F7F1E7] px-4 shadow-sm lg:hidden">
-
         <button
           type="button"
           onClick={() => setMobileMenuOpen((open) => !open)}
-          aria-label={
-            mobileMenuOpen ? "Close menu" : "Open menu"
-          }
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-admin-navigation"
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[#C8A878] text-[#4A2C20] hover:bg-[#EFE3D0]"
         >
           {mobileMenuOpen ? (
-            <svg {...{
-              width: 24,
-              height: 24,
-              viewBox: "0 0 24 24",
-              fill: "none",
-              stroke: "currentColor",
-              strokeWidth: 2,
-              strokeLinecap: "round" as const,
-            }}>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
               <path d="M18 6 6 18M6 6l12 12" />
             </svg>
           ) : (
-            <svg {...{
-              width: 24,
-              height: 24,
-              viewBox: "0 0 24 24",
-              fill: "none",
-              stroke: "currentColor",
-              strokeWidth: 2,
-              strokeLinecap: "round" as const,
-            }}>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
               <path d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           )}
         </button>
 
         <Link href="/admin" className="flex min-w-0 items-center gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#C8A878] bg-[#4A2C20] text-sm font-bold text-[#F7F1E7]">
-            RFA
-          </span>
+          <SchoolLogo size={40} />
 
           <span className="min-w-0">
             <span className="block truncate text-sm font-bold text-[#4A2C20]">
@@ -294,13 +307,16 @@ export default function AdminNavigation() {
         }`}
       >
         <div className="flex min-h-20 items-center justify-between border-b border-[#C8A878] px-5 py-4">
-          <div>
-            <p className="text-sm font-bold text-[#4A2C20]">
-              RISING FOUNDATION
-            </p>
-            <p className="mt-1 text-xs text-[#7A5038]">
-              ACADEMY · ADMIN PANEL
-            </p>
+          <div className="flex min-w-0 items-center gap-3">
+            <SchoolLogo size={42} />
+            <div>
+              <p className="text-sm font-bold text-[#4A2C20]">
+                RISING FOUNDATION
+              </p>
+              <p className="mt-1 text-xs text-[#7A5038]">
+                ACADEMY · ADMIN PANEL
+              </p>
+            </div>
           </div>
 
           <button
@@ -308,17 +324,17 @@ export default function AdminNavigation() {
             onClick={() => setMobileMenuOpen(false)}
             aria-label="Close menu"
             tabIndex={mobileMenuOpen ? 0 : -1}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-[#4A2C20] hover:bg-[#EFE3D0]"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-[#4A2C20] hover:bg-[#EFE3D0]"
           >
-            <svg {...{
-              width: 22,
-              height: 22,
-              viewBox: "0 0 24 24",
-              fill: "none",
-              stroke: "currentColor",
-              strokeWidth: 2,
-              strokeLinecap: "round" as const,
-            }}>
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
               <path d="M18 6 6 18M6 6l12 12" />
             </svg>
           </button>
@@ -348,9 +364,7 @@ export default function AdminNavigation() {
             href="/admin"
             className="flex min-h-24 items-center gap-3 border-b border-[#C8A878] px-5 py-5"
           >
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-[#C8A878] bg-[#4A2C20] text-sm font-bold text-[#F7F1E7]">
-              RFA
-            </span>
+            <SchoolLogo size={48} />
 
             <span>
               <span className="block text-sm font-bold text-[#4A2C20]">
