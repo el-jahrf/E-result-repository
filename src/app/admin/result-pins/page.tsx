@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -73,7 +73,7 @@ function Icon({
 }) {
   const common = {
     className: `h-5 w-5 shrink-0 ${
-      active ? "text-white" : "text-gray-500"
+      active ? "text-white" : "text-[#7A5038]"
     }`,
     fill: "none",
     stroke: "currentColor",
@@ -487,8 +487,8 @@ export default function ResultPinsPage() {
     return (
       <main className="min-h-screen bg-[#f7f8fa] p-6 lg:p-10">
         <div className="mx-auto max-w-7xl">
-          <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-            <p className="text-sm font-medium text-gray-600">
+          <div className="rounded-2xl border border-[#C8A878] bg-[#FFFCF7] p-8 shadow-sm">
+            <p className="text-sm font-medium text-[#7A5038]">
               Loading Result PIN management...
             </p>
           </div>
@@ -499,15 +499,15 @@ export default function ResultPinsPage() {
 
   return (
     <>
-      <main className="min-h-screen bg-[#f7f8fa] text-gray-900 print:hidden">
+      <main className="min-h-screen bg-[#f7f8fa] text-[#2B211C] print:hidden">
         <div className="flex min-h-screen">
-          <aside className="hidden w-64 shrink-0 border-r border-gray-200 bg-white lg:flex lg:flex-col">
-            <div className="flex h-20 items-center border-b border-gray-100 px-6">
+          <aside className="hidden w-64 shrink-0 border-r border-[#C8A878] bg-[#FFFCF7] lg:flex lg:flex-col">
+            <div className="flex h-20 items-center border-b border-[#C8A878] px-6">
               <div>
-                <h1 className="text-lg font-bold tracking-tight text-gray-950">
+                <h1 className="text-lg font-bold tracking-tight text-[#2B211C]">
                   RISING FOUNDATION
                 </h1>
-                <p className="text-xs font-medium tracking-wide text-gray-500">
+                <p className="text-xs font-medium tracking-wide text-[#7A5038]">
                   ACADEMY
                 </p>
               </div>
@@ -523,8 +523,8 @@ export default function ResultPinsPage() {
                     href={item.href}
                     className={`group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
                       active
-                        ? "bg-gray-900 text-white shadow-sm"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-950"
+                        ? "bg-[#4A2C20] text-white shadow-sm"
+                        : "text-[#7A5038] hover:bg-[#EFE3D0] hover:text-[#2B211C]"
                     }`}
                   >
                     <Icon
@@ -537,17 +537,17 @@ export default function ResultPinsPage() {
               })}
             </nav>
 
-            <div className="border-t border-gray-100 p-4">
-              <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
-                <p className="text-[10px] font-bold tracking-wider text-gray-500">
+            <div className="border-t border-[#C8A878] p-4">
+              <div className="rounded-xl border border-[#C8A878] bg-[#F7F1E7] p-4">
+                <p className="text-[10px] font-bold tracking-wider text-[#7A5038]">
                   CURRENT SESSION
                 </p>
 
-                <p className="mt-1 text-sm font-bold text-gray-900">
+                <p className="mt-1 text-sm font-bold text-[#2B211C]">
                   {selectedSession?.name || "No current session"}
                 </p>
 
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-[#7A5038]">
                   Result PIN Management
                 </p>
               </div>
@@ -555,28 +555,28 @@ export default function ResultPinsPage() {
           </aside>
 
           <section className="flex min-w-0 flex-1 flex-col">
-            <header className="flex min-h-20 items-center justify-between border-b border-gray-200 bg-white px-6 py-4 lg:px-10">
+            <header className="flex min-h-20 items-center justify-between border-b border-[#C8A878] bg-[#FFFCF7] px-6 py-4 lg:px-10">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[#7A5038]">
                   Administration
                 </p>
 
-                <h2 className="mt-1 text-lg font-bold text-gray-950">
+                <h2 className="mt-1 text-lg font-bold text-[#2B211C]">
                   Result PINs
                 </h2>
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-900 text-sm font-bold text-white">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4A2C20] text-sm font-bold text-white">
                   AD
                 </div>
 
                 <div className="hidden sm:block">
-                  <p className="text-sm font-bold text-gray-900">
+                  <p className="text-sm font-bold text-[#2B211C]">
                     Admin
                   </p>
 
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[#7A5038]">
                     Administrator
                   </p>
                 </div>
@@ -586,15 +586,15 @@ export default function ResultPinsPage() {
             <div className="flex-1 p-6 lg:p-10">
               <div className="mx-auto max-w-7xl space-y-7">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wide text-gray-500">
+                  <p className="text-xs font-bold uppercase tracking-wide text-[#7A5038]">
                     Student Result Access
                   </p>
 
-                  <h1 className="mt-1 text-3xl font-bold tracking-tight text-gray-950">
+                  <h1 className="mt-1 text-3xl font-bold tracking-tight text-[#2B211C]">
                     Result PINs
                   </h1>
 
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-500">
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-[#7A5038]">
                     Generate, manage and print student result
                     access PINs for published results.
                   </p>
@@ -612,19 +612,19 @@ export default function ResultPinsPage() {
                   </div>
                 )}
 
-                <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-                  <div className="border-b border-gray-200 bg-gray-50/70 px-6 py-5">
+                <section className="overflow-hidden rounded-2xl border border-[#C8A878] bg-[#FFFCF7] shadow-sm">
+                  <div className="border-b border-[#C8A878] bg-[#F7F1E7] px-6 py-5">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-900">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#4A2C20]">
                         <Icon name="pin" active />
                       </div>
 
                       <div>
-                        <h2 className="text-base font-bold text-gray-950">
+                        <h2 className="text-base font-bold text-[#2B211C]">
                           Generate Result PINs
                         </h2>
 
-                        <p className="mt-0.5 text-xs text-gray-500">
+                        <p className="mt-0.5 text-xs text-[#7A5038]">
                           PINs contain 15 numbers and use the
                           format 4443-4443-4443-444.
                         </p>
@@ -634,7 +634,7 @@ export default function ResultPinsPage() {
 
                   <div className="grid gap-5 p-6 md:grid-cols-2 lg:grid-cols-4">
                     <div>
-                      <label className="mb-2 block text-sm font-bold text-gray-800">
+                      <label className="mb-2 block text-sm font-bold text-[#4A2C20]">
                         Academic Session
                       </label>
 
@@ -643,7 +643,7 @@ export default function ResultPinsPage() {
                         onChange={(event) =>
                           setSessionId(event.target.value)
                         }
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+                        className="w-full rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm font-medium text-[#4A2C20] outline-none transition focus:border-[#4A2C20] focus:ring-1 focus:ring-[#C8A878]"
                       >
                         {sessions.map((session) => (
                           <option
@@ -652,7 +652,7 @@ export default function ResultPinsPage() {
                           >
                             {session.name}
                             {session.isCurrent
-                              ? " — Current"
+                              ? " â€” Current"
                               : ""}
                           </option>
                         ))}
@@ -660,7 +660,7 @@ export default function ResultPinsPage() {
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-sm font-bold text-gray-800">
+                      <label className="mb-2 block text-sm font-bold text-[#4A2C20]">
                         Term
                       </label>
 
@@ -669,7 +669,7 @@ export default function ResultPinsPage() {
                         onChange={(event) =>
                           setTerm(event.target.value)
                         }
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+                        className="w-full rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm font-medium text-[#4A2C20] outline-none transition focus:border-[#4A2C20] focus:ring-1 focus:ring-[#C8A878]"
                       >
                         {terms.map((item) => (
                           <option
@@ -683,7 +683,7 @@ export default function ResultPinsPage() {
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-sm font-bold text-gray-800">
+                      <label className="mb-2 block text-sm font-bold text-[#4A2C20]">
                         Generate For
                       </label>
 
@@ -696,7 +696,7 @@ export default function ResultPinsPage() {
                           setStudentId("");
                           setClassId("");
                         }}
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+                        className="w-full rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm font-medium text-[#4A2C20] outline-none transition focus:border-[#4A2C20] focus:ring-1 focus:ring-[#C8A878]"
                       >
                         <option value="student">
                           Individual Student
@@ -713,7 +713,7 @@ export default function ResultPinsPage() {
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-sm font-bold text-gray-800">
+                      <label className="mb-2 block text-sm font-bold text-[#4A2C20]">
                         Maximum Uses
                       </label>
 
@@ -725,13 +725,13 @@ export default function ResultPinsPage() {
                         onChange={(event) =>
                           setMaxUses(event.target.value)
                         }
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+                        className="w-full rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm font-medium text-[#4A2C20] outline-none transition focus:border-[#4A2C20] focus:ring-1 focus:ring-[#C8A878]"
                       />
                     </div>
 
                     {mode === "student" && (
                       <div className="md:col-span-2 lg:col-span-4">
-                        <label className="mb-2 block text-sm font-bold text-gray-800">
+                        <label className="mb-2 block text-sm font-bold text-[#4A2C20]">
                           Student
                         </label>
 
@@ -740,7 +740,7 @@ export default function ResultPinsPage() {
                           onChange={(event) =>
                             setStudentId(event.target.value)
                           }
-                          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+                          className="w-full rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm font-medium text-[#4A2C20] outline-none transition focus:border-[#4A2C20] focus:ring-1 focus:ring-[#C8A878]"
                         >
                           <option value="">
                             Select a student
@@ -755,7 +755,7 @@ export default function ResultPinsPage() {
                                 key={student.id}
                                 value={student.id}
                               >
-                                {student.admissionNo} —{" "}
+                                {student.admissionNo} â€”{" "}
                                 {studentName(student)}
                               </option>
                             ))}
@@ -765,7 +765,7 @@ export default function ResultPinsPage() {
 
                     {mode === "class" && (
                       <div className="md:col-span-2 lg:col-span-4">
-                        <label className="mb-2 block text-sm font-bold text-gray-800">
+                        <label className="mb-2 block text-sm font-bold text-[#4A2C20]">
                           Class
                         </label>
 
@@ -774,7 +774,7 @@ export default function ResultPinsPage() {
                           onChange={(event) =>
                             setClassId(event.target.value)
                           }
-                          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+                          className="w-full rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm font-medium text-[#4A2C20] outline-none transition focus:border-[#4A2C20] focus:ring-1 focus:ring-[#C8A878]"
                         >
                           <option value="">
                             Select a class
@@ -793,7 +793,7 @@ export default function ResultPinsPage() {
                     )}
                   </div>
 
-                  <div className="flex flex-wrap gap-3 border-t border-gray-100 px-6 py-5">
+                  <div className="flex flex-wrap gap-3 border-t border-[#C8A878] px-6 py-5">
                     <button
                       type="button"
                       onClick={generatePins}
@@ -803,7 +803,7 @@ export default function ResultPinsPage() {
                         (mode === "student" && !studentId) ||
                         (mode === "class" && !classId)
                       }
-                      className="rounded-xl bg-gray-900 px-5 py-3 text-sm font-bold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-xl bg-[#4A2C20] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#4A2C20] disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {generating
                         ? "Generating..."
@@ -818,24 +818,24 @@ export default function ResultPinsPage() {
                       type="button"
                       onClick={printCards}
                       disabled={activePins.length === 0}
-                      className="rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-bold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-5 py-3 text-sm font-bold text-[#4A2C20] transition hover:bg-[#F7F1E7] disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Print Scratch Cards ({activePins.length})
                     </button>
                   </div>
                 </section>
 
-                <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-                  <div className="flex flex-col gap-3 border-b border-gray-200 bg-gray-50/70 px-6 py-5 md:flex-row md:items-center md:justify-between">
+                <section className="overflow-hidden rounded-2xl border border-[#C8A878] bg-[#FFFCF7] shadow-sm">
+                  <div className="flex flex-col gap-3 border-b border-[#C8A878] bg-[#F7F1E7] px-6 py-5 md:flex-row md:items-center md:justify-between">
                     <div>
-                      <h2 className="text-base font-bold text-gray-950">
+                      <h2 className="text-base font-bold text-[#2B211C]">
                         Generated PINs
                       </h2>
 
-                      <p className="mt-1 text-xs text-gray-500">
+                      <p className="mt-1 text-xs text-[#7A5038]">
                         {selectedSession?.name ||
                           "Selected session"}{" "}
-                        ·{" "}
+                        Â·{" "}
                         {
                           terms.find(
                             (item) => item.value === term
@@ -844,7 +844,7 @@ export default function ResultPinsPage() {
                       </p>
                     </div>
 
-                    <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-600">
+                    <div className="rounded-lg border border-[#C8A878] bg-[#FFFCF7] px-3 py-2 text-xs font-semibold text-[#7A5038]">
                       {filteredPins.length} PIN
                       {filteredPins.length === 1
                         ? ""
@@ -855,15 +855,15 @@ export default function ResultPinsPage() {
 
                   {filteredPins.length === 0 ? (
                     <div className="px-6 py-14 text-center">
-                      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#EFE3D0]">
                         <Icon name="pin" />
                       </div>
 
-                      <h3 className="mt-4 text-base font-bold text-gray-950">
+                      <h3 className="mt-4 text-base font-bold text-[#2B211C]">
                         No PINs generated
                       </h3>
 
-                      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-gray-500">
+                      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#7A5038]">
                         No result access PINs have been
                         generated for this academic session
                         and term.
@@ -872,55 +872,55 @@ export default function ResultPinsPage() {
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full min-w-[900px] text-left text-sm">
-                        <thead className="border-b border-gray-200 bg-white">
+                        <thead className="border-b border-[#C8A878] bg-[#FFFCF7]">
                           <tr>
-                            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wide text-gray-500">
+                            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wide text-[#7A5038]">
                               Student
                             </th>
 
-                            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wide text-gray-500">
+                            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wide text-[#7A5038]">
                               Admission No.
                             </th>
 
-                            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wide text-gray-500">
+                            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wide text-[#7A5038]">
                               PIN
                             </th>
 
-                            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wide text-gray-500">
+                            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wide text-[#7A5038]">
                               Uses
                             </th>
 
-                            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wide text-gray-500">
+                            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wide text-[#7A5038]">
                               Status
                             </th>
 
-                            <th className="px-6 py-4 text-right text-xs font-bold uppercase tracking-wide text-gray-500">
+                            <th className="px-6 py-4 text-right text-xs font-bold uppercase tracking-wide text-[#7A5038]">
                               Action
                             </th>
                           </tr>
                         </thead>
 
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-[#C8A878]">
                           {filteredPins.map((pin) => (
                             <tr
                               key={pin.id}
-                              className="transition hover:bg-gray-50"
+                              className="transition hover:bg-[#F7F1E7]"
                             >
-                              <td className="px-6 py-4 font-semibold text-gray-900">
+                              <td className="px-6 py-4 font-semibold text-[#2B211C]">
                                 {studentName(pin.student)}
                               </td>
 
-                              <td className="px-6 py-4 text-gray-600">
+                              <td className="px-6 py-4 text-[#7A5038]">
                                 {pin.student.admissionNo}
                               </td>
 
                               <td className="px-6 py-4">
-                                <span className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 font-mono text-sm font-bold tracking-wide text-gray-900">
+                                <span className="rounded-lg border border-[#C8A878] bg-[#F7F1E7] px-3 py-1.5 font-mono text-sm font-bold tracking-wide text-[#2B211C]">
                                   {pin.pin}
                                 </span>
                               </td>
 
-                              <td className="px-6 py-4 text-gray-600">
+                              <td className="px-6 py-4 text-[#7A5038]">
                                 <span className="font-semibold">
                                   {pin.usedCount}
                                 </span>{" "}
@@ -932,7 +932,7 @@ export default function ResultPinsPage() {
                                   className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${
                                     pin.isActive
                                       ? "bg-emerald-100 text-emerald-700"
-                                      : "bg-gray-100 text-gray-600"
+                                      : "bg-[#EFE3D0] text-[#7A5038]"
                                   }`}
                                 >
                                   {pin.isActive
@@ -949,7 +949,7 @@ export default function ResultPinsPage() {
                                       printSingleCard(pin)
                                     }
                                     disabled={!pin.isActive}
-                                    className="text-sm font-bold text-gray-700 transition hover:text-gray-950 disabled:cursor-not-allowed disabled:opacity-40"
+                                    className="text-sm font-bold text-[#4A2C20] transition hover:text-[#2B211C] disabled:cursor-not-allowed disabled:opacity-40"
                                   >
                                     Print
                                   </button>
@@ -959,7 +959,7 @@ export default function ResultPinsPage() {
                                     onClick={() =>
                                       togglePin(pin)
                                     }
-                                    className="text-sm font-bold text-gray-700 transition hover:text-gray-950"
+                                    className="text-sm font-bold text-[#4A2C20] transition hover:text-[#2B211C]"
                                   >
                                     {pin.isActive
                                       ? "Deactivate"

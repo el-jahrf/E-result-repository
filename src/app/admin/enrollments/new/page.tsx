@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
@@ -28,7 +28,7 @@ function Icon({
 }) {
   const common = {
     className: `h-5 w-5 shrink-0 ${
-      active ? "text-white" : "text-gray-500"
+      active ? "text-white" : "text-[#7A5038]"
     }`,
     fill: "none",
     stroke: "currentColor",
@@ -292,16 +292,16 @@ export default async function NewEnrollmentPage({
     "No current session";
 
   return (
-    <main className="min-h-screen bg-[#f7f8fa] text-gray-900">
+    <main className="min-h-screen bg-[#f7f8fa] text-[#2B211C]">
       <div className="flex min-h-screen">
         {/* Sidebar */}
-        <aside className="hidden w-64 shrink-0 border-r border-gray-200 bg-white lg:flex lg:flex-col">
-          <div className="flex h-20 items-center border-b border-gray-100 px-6">
+        <aside className="hidden w-64 shrink-0 border-r border-[#C8A878] bg-[#FFFCF7] lg:flex lg:flex-col">
+          <div className="flex h-20 items-center border-b border-[#C8A878] px-6">
             <div>
-              <h1 className="text-lg font-bold tracking-tight text-gray-950">
+              <h1 className="text-lg font-bold tracking-tight text-[#2B211C]">
                 RISING FOUNDATION
               </h1>
-              <p className="text-xs font-medium tracking-wide text-gray-500">
+              <p className="text-xs font-medium tracking-wide text-[#7A5038]">
                 ACADEMY
               </p>
             </div>
@@ -317,8 +317,8 @@ export default async function NewEnrollmentPage({
                   href={item.href}
                   className={`group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
                     active
-                      ? "bg-gray-900 text-white shadow-sm"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-950"
+                      ? "bg-[#4A2C20] text-white shadow-sm"
+                      : "text-[#7A5038] hover:bg-[#EFE3D0] hover:text-[#2B211C]"
                   }`}
                 >
                   <Icon name={item.icon} active={active} />
@@ -328,17 +328,17 @@ export default async function NewEnrollmentPage({
             })}
           </nav>
 
-          <div className="border-t border-gray-100 p-4">
-            <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
-              <p className="text-[10px] font-bold tracking-wider text-gray-500">
+          <div className="border-t border-[#C8A878] p-4">
+            <div className="rounded-xl border border-[#C8A878] bg-[#F7F1E7] p-4">
+              <p className="text-[10px] font-bold tracking-wider text-[#7A5038]">
                 CURRENT SESSION
               </p>
 
-              <p className="mt-1 text-sm font-bold text-gray-900">
+              <p className="mt-1 text-sm font-bold text-[#2B211C]">
                 {currentSession}
               </p>
 
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-[#7A5038]">
                 Enrollment Management
               </p>
             </div>
@@ -347,27 +347,27 @@ export default async function NewEnrollmentPage({
 
         {/* Main */}
         <section className="flex min-w-0 flex-1 flex-col">
-          <header className="flex h-20 items-center justify-between border-b border-gray-200 bg-white px-6 lg:px-10">
+          <header className="flex h-20 items-center justify-between border-b border-[#C8A878] bg-[#FFFCF7] px-6 lg:px-10">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#7A5038]">
                 Student Management
               </p>
 
-              <h2 className="mt-1 text-lg font-bold text-gray-950">
+              <h2 className="mt-1 text-lg font-bold text-[#2B211C]">
                 Enrollment
               </h2>
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-900 text-sm font-bold text-white">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4A2C20] text-sm font-bold text-white">
                 AD
               </div>
 
               <div className="hidden sm:block">
-                <p className="text-sm font-bold text-gray-900">
+                <p className="text-sm font-bold text-[#2B211C]">
                   Admin
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[#7A5038]">
                   Administrator
                 </p>
               </div>
@@ -379,20 +379,20 @@ export default async function NewEnrollmentPage({
               <div className="mb-8">
                 <Link
                   href="/admin/students"
-                  className="inline-flex items-center text-sm font-semibold text-gray-500 transition hover:text-gray-900"
+                  className="inline-flex items-center text-sm font-semibold text-[#7A5038] transition hover:text-[#2B211C]"
                 >
-                  ← Back to Students
+                  â† Back to Students
                 </Link>
 
-                <p className="mt-6 text-xs font-bold uppercase tracking-wide text-gray-500">
+                <p className="mt-6 text-xs font-bold uppercase tracking-wide text-[#7A5038]">
                   Student Management
                 </p>
 
-                <h1 className="mt-1 text-3xl font-bold tracking-tight text-gray-950">
+                <h1 className="mt-1 text-3xl font-bold tracking-tight text-[#2B211C]">
                   Enroll Student
                 </h1>
 
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-500">
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-[#7A5038]">
                   Place a student into a class for an academic
                   session and term.
                 </p>
@@ -405,74 +405,74 @@ export default async function NewEnrollmentPage({
               )}
 
               {students.length === 0 ? (
-                <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                <div className="rounded-2xl border border-[#C8A878] bg-[#FFFCF7] p-8 text-center shadow-sm">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#EFE3D0]">
                     <Icon name="students" />
                   </div>
 
-                  <h2 className="mt-4 text-lg font-bold text-gray-950">
+                  <h2 className="mt-4 text-lg font-bold text-[#2B211C]">
                     No students available
                   </h2>
 
-                  <p className="mt-2 text-sm text-gray-500">
+                  <p className="mt-2 text-sm text-[#7A5038]">
                     Create a student first before enrolling one.
                   </p>
 
                   <Link
                     href="/admin/students/new"
-                    className="mt-5 inline-flex rounded-xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
+                    className="mt-5 inline-flex rounded-xl bg-[#4A2C20] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4A2C20]"
                   >
                     + Add Student
                   </Link>
                 </div>
               ) : classes.length === 0 ? (
-                <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                <div className="rounded-2xl border border-[#C8A878] bg-[#FFFCF7] p-8 text-center shadow-sm">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#EFE3D0]">
                     <Icon name="classes" />
                   </div>
 
-                  <h2 className="mt-4 text-lg font-bold text-gray-950">
+                  <h2 className="mt-4 text-lg font-bold text-[#2B211C]">
                     No classes available
                   </h2>
 
-                  <p className="mt-2 text-sm text-gray-500">
+                  <p className="mt-2 text-sm text-[#7A5038]">
                     Create a class first before enrolling a
                     student.
                   </p>
 
                   <Link
                     href="/admin/classes"
-                    className="mt-5 inline-flex rounded-xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
+                    className="mt-5 inline-flex rounded-xl bg-[#4A2C20] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4A2C20]"
                   >
                     Go to Classes
                   </Link>
                 </div>
               ) : sessions.length === 0 ? (
-                <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                <div className="rounded-2xl border border-[#C8A878] bg-[#FFFCF7] p-8 text-center shadow-sm">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#EFE3D0]">
                     <Icon name="results" />
                   </div>
 
-                  <h2 className="mt-4 text-lg font-bold text-gray-950">
+                  <h2 className="mt-4 text-lg font-bold text-[#2B211C]">
                     No academic session available
                   </h2>
 
-                  <p className="mt-2 text-sm text-gray-500">
+                  <p className="mt-2 text-sm text-[#7A5038]">
                     Create an academic session first.
                   </p>
 
                   <Link
                     href="/admin/sessions"
-                    className="mt-5 inline-flex rounded-xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
+                    className="mt-5 inline-flex rounded-xl bg-[#4A2C20] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4A2C20]"
                   >
                     Go to Academic Sessions
                   </Link>
                 </div>
               ) : (
-                <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-                  <div className="border-b border-gray-200 bg-gray-50/70 px-6 py-5 sm:px-8">
+                <div className="overflow-hidden rounded-2xl border border-[#C8A878] bg-[#FFFCF7] shadow-sm">
+                  <div className="border-b border-[#C8A878] bg-[#F7F1E7] px-6 py-5 sm:px-8">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-900">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#4A2C20]">
                         <Icon
                           name="enrollment"
                           active
@@ -480,11 +480,11 @@ export default async function NewEnrollmentPage({
                       </div>
 
                       <div>
-                        <h2 className="text-base font-bold text-gray-950">
+                        <h2 className="text-base font-bold text-[#2B211C]">
                           Enrollment Details
                         </h2>
 
-                        <p className="mt-0.5 text-xs text-gray-500">
+                        <p className="mt-0.5 text-xs text-[#7A5038]">
                           Select the student, class, session and
                           term.
                         </p>
@@ -500,7 +500,7 @@ export default async function NewEnrollmentPage({
                       <div>
                         <label
                           htmlFor="studentId"
-                          className="mb-2 block text-sm font-bold text-gray-800"
+                          className="mb-2 block text-sm font-bold text-[#4A2C20]"
                         >
                           Student
                         </label>
@@ -510,7 +510,7 @@ export default async function NewEnrollmentPage({
                           name="studentId"
                           required
                           defaultValue=""
-                          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+                          className="w-full rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm font-medium text-[#4A2C20] outline-none transition focus:border-[#4A2C20] focus:ring-1 focus:ring-[#C8A878]"
                         >
                           <option value="" disabled>
                             Select student
@@ -521,7 +521,7 @@ export default async function NewEnrollmentPage({
                               key={student.id}
                               value={student.id}
                             >
-                              {student.admissionNo} —{" "}
+                              {student.admissionNo} â€”{" "}
                               {student.firstName}{" "}
                               {student.middleName
                                 ? `${student.middleName} `
@@ -535,7 +535,7 @@ export default async function NewEnrollmentPage({
                       <div>
                         <label
                           htmlFor="classId"
-                          className="mb-2 block text-sm font-bold text-gray-800"
+                          className="mb-2 block text-sm font-bold text-[#4A2C20]"
                         >
                           Class
                         </label>
@@ -545,7 +545,7 @@ export default async function NewEnrollmentPage({
                           name="classId"
                           required
                           defaultValue=""
-                          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+                          className="w-full rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm font-medium text-[#4A2C20] outline-none transition focus:border-[#4A2C20] focus:ring-1 focus:ring-[#C8A878]"
                         >
                           <option value="" disabled>
                             Select class
@@ -558,7 +558,7 @@ export default async function NewEnrollmentPage({
                               classItem.stream,
                             ]
                               .filter(Boolean)
-                              .join(" — ");
+                              .join(" â€” ");
 
                             return (
                               <option
@@ -575,7 +575,7 @@ export default async function NewEnrollmentPage({
                       <div>
                         <label
                           htmlFor="sessionId"
-                          className="mb-2 block text-sm font-bold text-gray-800"
+                          className="mb-2 block text-sm font-bold text-[#4A2C20]"
                         >
                           Academic Session
                         </label>
@@ -585,7 +585,7 @@ export default async function NewEnrollmentPage({
                           name="sessionId"
                           required
                           defaultValue=""
-                          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+                          className="w-full rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm font-medium text-[#4A2C20] outline-none transition focus:border-[#4A2C20] focus:ring-1 focus:ring-[#C8A878]"
                         >
                           <option value="" disabled>
                             Select academic session
@@ -598,7 +598,7 @@ export default async function NewEnrollmentPage({
                             >
                               {session.name}
                               {session.isCurrent
-                                ? " — Current"
+                                ? " â€” Current"
                                 : ""}
                             </option>
                           ))}
@@ -608,7 +608,7 @@ export default async function NewEnrollmentPage({
                       <div>
                         <label
                           htmlFor="term"
-                          className="mb-2 block text-sm font-bold text-gray-800"
+                          className="mb-2 block text-sm font-bold text-[#4A2C20]"
                         >
                           Term
                         </label>
@@ -618,7 +618,7 @@ export default async function NewEnrollmentPage({
                           name="term"
                           required
                           defaultValue=""
-                          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 outline-none transition focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+                          className="w-full rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm font-medium text-[#4A2C20] outline-none transition focus:border-[#4A2C20] focus:ring-1 focus:ring-[#C8A878]"
                         >
                           <option value="" disabled>
                             Select term
@@ -635,17 +635,17 @@ export default async function NewEnrollmentPage({
                         </select>
                       </div>
 
-                      <div className="flex flex-col-reverse gap-3 border-t border-gray-100 pt-6 sm:flex-row sm:justify-end">
+                      <div className="flex flex-col-reverse gap-3 border-t border-[#C8A878] pt-6 sm:flex-row sm:justify-end">
                         <Link
                           href="/admin/students"
-                          className="rounded-xl border border-gray-200 px-5 py-3 text-center text-sm font-bold text-gray-700 transition hover:bg-gray-50"
+                          className="rounded-xl border border-[#C8A878] px-5 py-3 text-center text-sm font-bold text-[#4A2C20] transition hover:bg-[#F7F1E7]"
                         >
                           Cancel
                         </Link>
 
                         <button
                           type="submit"
-                          className="rounded-xl bg-gray-900 px-5 py-3 text-sm font-bold text-white transition hover:bg-gray-800"
+                          className="rounded-xl bg-[#4A2C20] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#4A2C20]"
                         >
                           Enroll Student
                         </button>

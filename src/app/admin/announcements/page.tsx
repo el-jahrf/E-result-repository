@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+﻿import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -161,27 +161,27 @@ export default async function AnnouncementsPage({
   });
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-[#F7F1E7]">
       <div className="mx-auto max-w-6xl px-6 py-8 lg:px-8">
         <div className="mb-7">
-          <p className="text-xs font-medium text-gray-500">
+          <p className="text-xs font-medium text-[#7A5038]">
             School Communication
           </p>
 
           <div className="mt-1 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-gray-950">
+              <h1 className="text-2xl font-bold tracking-tight text-[#2B211C]">
                 Announcements
               </h1>
 
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-[#7A5038]">
                 Create and manage announcements shown to students.
               </p>
             </div>
 
             <a
               href="/admin"
-              className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
+              className="inline-flex items-center justify-center rounded-lg border border-[#C8A878] bg-[#FFFCF7] px-4 py-2.5 text-sm font-semibold text-[#4A2C20] shadow-sm transition hover:bg-[#F7F1E7]"
             >
               Back to Dashboard
             </a>
@@ -200,13 +200,13 @@ export default async function AnnouncementsPage({
           </div>
         ) : null}
 
-        <section className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <div className="border-b border-gray-200 px-6 py-5">
-            <h2 className="text-base font-bold text-gray-950">
+        <section className="rounded-2xl border border-[#C8A878] bg-[#FFFCF7] shadow-sm">
+          <div className="border-b border-[#C8A878] px-6 py-5">
+            <h2 className="text-base font-bold text-[#2B211C]">
               Create Announcement
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-[#7A5038]">
               New announcements are saved as drafts until you publish them.
             </p>
           </div>
@@ -215,7 +215,7 @@ export default async function AnnouncementsPage({
             <div>
               <label
                 htmlFor="title"
-                className="mb-2 block text-sm font-semibold text-gray-700"
+                className="mb-2 block text-sm font-semibold text-[#4A2C20]"
               >
                 Announcement Title
               </label>
@@ -227,14 +227,14 @@ export default async function AnnouncementsPage({
                 required
                 maxLength={200}
                 placeholder="e.g. Resumption Date for Second Term"
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-500 focus:ring-2 focus:ring-gray-200"
+                className="w-full rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm text-[#2B211C] outline-none transition placeholder:text-[#7A5038] focus:border-[#C8A878] focus:ring-2 focus:ring-[#C8A878]"
               />
             </div>
 
             <div>
               <label
                 htmlFor="content"
-                className="mb-2 block text-sm font-semibold text-gray-700"
+                className="mb-2 block text-sm font-semibold text-[#4A2C20]"
               >
                 Announcement
               </label>
@@ -245,14 +245,14 @@ export default async function AnnouncementsPage({
                 required
                 rows={6}
                 placeholder="Write the announcement students should see..."
-                className="w-full resize-y rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm leading-6 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-500 focus:ring-2 focus:ring-gray-200"
+                className="w-full resize-y rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm leading-6 text-[#2B211C] outline-none transition placeholder:text-[#7A5038] focus:border-[#C8A878] focus:ring-2 focus:ring-[#C8A878]"
               />
             </div>
 
             <div className="flex justify-end">
               <button
                 type="submit"
-                className="rounded-xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
+                className="rounded-xl bg-[#4A2C20] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4A2C20]"
               >
                 Create Announcement
               </button>
@@ -260,29 +260,29 @@ export default async function AnnouncementsPage({
           </form>
         </section>
 
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <div className="border-b border-gray-200 px-6 py-5">
-            <h2 className="text-base font-bold text-gray-950">
+        <section className="mt-6 rounded-2xl border border-[#C8A878] bg-[#FFFCF7] shadow-sm">
+          <div className="border-b border-[#C8A878] px-6 py-5">
+            <h2 className="text-base font-bold text-[#2B211C]">
               Existing Announcements
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-[#7A5038]">
               Published announcements are visible on the student dashboard.
             </p>
           </div>
 
           {announcements.length === 0 ? (
             <div className="px-6 py-12 text-center">
-              <p className="text-sm font-semibold text-gray-700">
+              <p className="text-sm font-semibold text-[#4A2C20]">
                 No announcements yet
               </p>
 
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-[#7A5038]">
                 Create your first school announcement above.
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-[#C8A878]">
               {announcements.map((announcement) => (
                 <article key={announcement.id} className="p-6">
                   <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
@@ -292,7 +292,7 @@ export default async function AnnouncementsPage({
                           className={`rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ${
                             announcement.published
                               ? "bg-green-100 text-green-700"
-                              : "bg-gray-100 text-gray-600"
+                              : "bg-[#EFE3D0] text-[#7A5038]"
                           }`}
                         >
                           {announcement.published
@@ -300,7 +300,7 @@ export default async function AnnouncementsPage({
                             : "Draft"}
                         </span>
 
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-[#7A5038]">
                           Created {formatDate(announcement.createdAt)}
                         </span>
                       </div>
@@ -317,7 +317,7 @@ export default async function AnnouncementsPage({
                     <div>
                       <label
                         htmlFor={`title-${announcement.id}`}
-                        className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-400"
+                        className="mb-2 block text-xs font-bold uppercase tracking-wide text-[#7A5038]"
                       >
                         Title
                       </label>
@@ -329,14 +329,14 @@ export default async function AnnouncementsPage({
                         required
                         maxLength={200}
                         defaultValue={announcement.title}
-                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-900 outline-none transition focus:border-gray-500 focus:ring-2 focus:ring-gray-200"
+                        className="w-full rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm font-semibold text-[#2B211C] outline-none transition focus:border-[#C8A878] focus:ring-2 focus:ring-[#C8A878]"
                       />
                     </div>
 
                     <div>
                       <label
                         htmlFor={`content-${announcement.id}`}
-                        className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-400"
+                        className="mb-2 block text-xs font-bold uppercase tracking-wide text-[#7A5038]"
                       >
                         Content
                       </label>
@@ -347,14 +347,14 @@ export default async function AnnouncementsPage({
                         required
                         rows={5}
                         defaultValue={announcement.content}
-                        className="w-full resize-y rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm leading-6 text-gray-900 outline-none transition focus:border-gray-500 focus:ring-2 focus:ring-gray-200"
+                        className="w-full resize-y rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm leading-6 text-[#2B211C] outline-none transition focus:border-[#C8A878] focus:ring-2 focus:ring-[#C8A878]"
                       />
                     </div>
 
                     <div className="flex flex-wrap gap-2">
                       <button
                         type="submit"
-                        className="rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
+                        className="rounded-lg bg-[#4A2C20] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4A2C20]"
                       >
                         Save Changes
                       </button>

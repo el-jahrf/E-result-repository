@@ -3,6 +3,8 @@ import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const MAX_PHOTO_LENGTH = 2_000_000;
 

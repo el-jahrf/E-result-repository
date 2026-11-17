@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -240,14 +240,14 @@ function statusClasses(
   }
 
   if (status === "PUBLISHED") {
-    return "bg-blue-100 text-blue-800";
+    return "bg-[#EFE3D0] text-[#4A2C20]";
   }
 
   if (status === "REJECTED") {
     return "bg-red-100 text-red-800";
   }
 
-  return "bg-gray-100 text-gray-700";
+  return "bg-[#EFE3D0] text-[#4A2C20]";
 }
 
 type AdminResultsPageProps = {
@@ -283,20 +283,20 @@ export default async function AdminResultsPage({
 
   if (!currentSession) {
     return (
-      <main className="min-h-screen bg-slate-100">
+      <main className="min-h-screen bg-[#EFE3D0]">
         <div className="flex min-h-screen">
-          <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
-            <div className="border-b border-slate-200 px-6 py-5">
-              <p className="text-sm font-bold tracking-wide text-slate-900">
+          <aside className="hidden w-64 shrink-0 border-r border-[#C8A878] bg-[#FFFCF7] lg:flex lg:flex-col">
+            <div className="border-b border-[#C8A878] px-6 py-5">
+              <p className="text-sm font-bold tracking-wide text-[#2B211C]">
                 RISING FOUNDATION
               </p>
-              <p className="text-xs font-medium tracking-[0.2em] text-slate-500">
+              <p className="text-xs font-medium tracking-[0.2em] text-[#7A5038]">
                 ACADEMY
               </p>
             </div>
 
             <div className="px-4 py-5">
-              <p className="mb-3 px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <p className="mb-3 px-3 text-[11px] font-bold uppercase tracking-wider text-[#7A5038]">
                 Main Menu
               </p>
 
@@ -307,8 +307,8 @@ export default async function AdminResultsPage({
                     href={item.href}
                     className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                       item.href === "/admin/results"
-                        ? "bg-slate-900 text-white"
-                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                        ? "bg-[#4A2C20] text-white"
+                        : "text-[#7A5038] hover:bg-[#EFE3D0] hover:text-[#2B211C]"
                     }`}
                   >
                     <Icon name={item.icon} size={19} />
@@ -318,17 +318,17 @@ export default async function AdminResultsPage({
               </nav>
             </div>
 
-            <div className="mt-auto border-t border-slate-200 p-4">
-              <div className="flex items-center gap-3 rounded-lg bg-slate-50 px-3 py-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">
+            <div className="mt-auto border-t border-[#C8A878] p-4">
+              <div className="flex items-center gap-3 rounded-lg bg-[#F7F1E7] px-3 py-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#4A2C20] text-xs font-bold text-white">
                   A
                 </div>
 
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-slate-900">
+                  <p className="truncate text-sm font-semibold text-[#2B211C]">
                     Administrator
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-[#7A5038]">
                     System Admin
                   </p>
                 </div>
@@ -337,16 +337,16 @@ export default async function AdminResultsPage({
           </aside>
 
           <main className="flex-1 p-6 lg:p-10">
-            <div className="mx-auto max-w-4xl rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-              <p className="text-sm font-semibold text-slate-500">
+            <div className="mx-auto max-w-4xl rounded-2xl border border-[#C8A878] bg-[#FFFCF7] p-8 shadow-sm">
+              <p className="text-sm font-semibold text-[#7A5038]">
                 Administration / Result Review
               </p>
 
-              <h1 className="mt-2 text-2xl font-bold text-slate-950">
+              <h1 className="mt-2 text-2xl font-bold text-[#2B211C]">
                 Result Review
               </h1>
 
-              <p className="mt-2 text-slate-600">
+              <p className="mt-2 text-[#7A5038]">
                 No current academic session is configured.
               </p>
             </div>
@@ -509,22 +509,22 @@ export default async function AdminResultsPage({
   ).length;
 
   return (
-    <main className="min-h-screen bg-slate-100">
+    <main className="min-h-screen bg-[#EFE3D0]">
       <div className="flex min-h-screen">
         {/* Sidebar */}
-        <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
-          <div className="border-b border-slate-200 px-6 py-5">
-            <p className="text-sm font-bold tracking-wide text-slate-900">
+        <aside className="hidden w-64 shrink-0 border-r border-[#C8A878] bg-[#FFFCF7] lg:flex lg:flex-col">
+          <div className="border-b border-[#C8A878] px-6 py-5">
+            <p className="text-sm font-bold tracking-wide text-[#2B211C]">
               RISING FOUNDATION
             </p>
 
-            <p className="text-xs font-medium tracking-[0.2em] text-slate-500">
+            <p className="text-xs font-medium tracking-[0.2em] text-[#7A5038]">
               ACADEMY
             </p>
           </div>
 
           <div className="px-4 py-5">
-            <p className="mb-3 px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            <p className="mb-3 px-3 text-[11px] font-bold uppercase tracking-wider text-[#7A5038]">
               Main Menu
             </p>
 
@@ -539,8 +539,8 @@ export default async function AdminResultsPage({
                     href={item.href}
                     className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                       active
-                        ? "bg-slate-900 text-white shadow-sm"
-                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                        ? "bg-[#4A2C20] text-white shadow-sm"
+                        : "text-[#7A5038] hover:bg-[#EFE3D0] hover:text-[#2B211C]"
                     }`}
                   >
                     <Icon
@@ -555,18 +555,18 @@ export default async function AdminResultsPage({
             </nav>
           </div>
 
-          <div className="mt-auto border-t border-slate-200 p-4">
-            <div className="flex items-center gap-3 rounded-lg bg-slate-50 px-3 py-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">
+          <div className="mt-auto border-t border-[#C8A878] p-4">
+            <div className="flex items-center gap-3 rounded-lg bg-[#F7F1E7] px-3 py-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#4A2C20] text-xs font-bold text-white">
                 A
               </div>
 
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-slate-900">
+                <p className="truncate text-sm font-semibold text-[#2B211C]">
                   Administrator
                 </p>
 
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[#7A5038]">
                   System Admin
                 </p>
               </div>
@@ -578,17 +578,17 @@ export default async function AdminResultsPage({
         <div className="min-w-0 flex-1">
           <div className="mx-auto max-w-7xl px-5 py-7 sm:px-6 lg:px-8">
             {/* Header */}
-            <div className="mb-7 flex flex-col gap-4 border-b border-slate-200 pb-7 md:flex-row md:items-end md:justify-between">
+            <div className="mb-7 flex flex-col gap-4 border-b border-[#C8A878] pb-7 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#7A5038]">
                   Administration / Results
                 </p>
 
-                <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
+                <h1 className="text-2xl font-bold tracking-tight text-[#2B211C] sm:text-3xl">
                   Result Review
                 </h1>
 
-                <p className="mt-1.5 max-w-2xl text-sm text-slate-500">
+                <p className="mt-1.5 max-w-2xl text-sm text-[#7A5038]">
                   Review, approve, reject and publish student
                   results submitted by teachers.
                 </p>
@@ -596,25 +596,25 @@ export default async function AdminResultsPage({
 
               <Link
                 href="/admin"
-                className="inline-flex w-fit items-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+                className="inline-flex w-fit items-center rounded-lg border border-[#C8A878] bg-[#FFFCF7] px-4 py-2.5 text-sm font-semibold text-[#4A2C20] shadow-sm transition hover:bg-[#F7F1E7]"
               >
-                ← Dashboard
+                â† Dashboard
               </Link>
             </div>
 
             {/* Current Session */}
-            <section className="mb-5 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <section className="mb-5 rounded-xl border border-[#C8A878] bg-[#FFFCF7] p-5 shadow-sm">
               <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[#7A5038]">
                     Current Academic Session
                   </p>
 
-                  <h2 className="mt-1 text-xl font-bold text-slate-950">
+                  <h2 className="mt-1 text-xl font-bold text-[#2B211C]">
                     {currentSession.name}
                   </h2>
 
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-[#7A5038]">
                     Results currently in the administrative workflow
                   </p>
                 </div>
@@ -650,12 +650,12 @@ export default async function AdminResultsPage({
                     </p>
                   </div>
 
-                  <div className="rounded-lg border border-blue-100 bg-blue-50 px-5 py-3 text-center">
-                    <p className="text-xs font-medium text-blue-700">
+                  <div className="rounded-lg border border-[#C8A878] bg-[#F7F1E7] px-5 py-3 text-center">
+                    <p className="text-xs font-medium text-[#7A5038]">
                       Published
                     </p>
 
-                    <p className="mt-1 text-2xl font-bold text-blue-900">
+                    <p className="mt-1 text-2xl font-bold text-[#4A2C20]">
                       {publishedCount}
                     </p>
                   </div>
@@ -664,7 +664,7 @@ export default async function AdminResultsPage({
             </section>
 
             {/* Search */}
-            <section className="mb-5 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <section className="mb-5 rounded-xl border border-[#C8A878] bg-[#FFFCF7] p-4 shadow-sm">
               <form
                 method="GET"
                 className="flex flex-col gap-3 sm:flex-row"
@@ -675,13 +675,13 @@ export default async function AdminResultsPage({
                     name="search"
                     defaultValue={searchTerm}
                     placeholder="Search by student name, admission number or class..."
-                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    className="w-full rounded-lg border border-[#C8A878] bg-[#FFFCF7] px-4 py-3 text-sm text-[#2B211C] outline-none transition placeholder:text-[#7A5038] focus:border-[#C8A878] focus:ring-2 focus:ring-[#C8A878]"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="rounded-lg bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
+                  className="rounded-lg bg-[#4A2C20] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#4A2C20]"
                 >
                   Search
                 </button>
@@ -689,7 +689,7 @@ export default async function AdminResultsPage({
                 {searchTerm && (
                   <Link
                     href="/admin/results"
-                    className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                    className="inline-flex items-center justify-center rounded-lg border border-[#C8A878] bg-[#FFFCF7] px-6 py-3 text-sm font-semibold text-[#4A2C20] transition hover:bg-[#F7F1E7]"
                   >
                     Clear
                   </Link>
@@ -697,16 +697,16 @@ export default async function AdminResultsPage({
               </form>
 
               {searchTerm && (
-                <p className="mt-3 text-sm text-slate-500">
+                <p className="mt-3 text-sm text-[#7A5038]">
                   Showing{" "}
-                  <span className="font-semibold text-slate-800">
+                  <span className="font-semibold text-[#4A2C20]">
                     {filteredResults.length}
                   </span>{" "}
                   result
                   {filteredResults.length === 1
                     ? ""
                     : "s"} matching{" "}
-                  <span className="font-semibold text-slate-800">
+                  <span className="font-semibold text-[#4A2C20]">
                     "{searchTerm}"
                   </span>
                   .
@@ -715,38 +715,38 @@ export default async function AdminResultsPage({
             </section>
 
             {/* Workflow Information */}
-            <section className="mb-5 rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-xs font-medium text-slate-600">
+            <section className="mb-5 rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-5 py-4 shadow-sm">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-xs font-medium text-[#7A5038]">
                 <div className="flex items-center gap-2">
                   <span className="h-2.5 w-2.5 rounded-full bg-yellow-500" />
-                  Submitted — awaiting review
+                  Submitted â€” awaiting review
                 </div>
 
                 <div className="flex items-center gap-2">
                   <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
-                  Rejected — teacher can correct and resubmit
+                  Rejected â€” teacher can correct and resubmit
                 </div>
 
                 <div className="flex items-center gap-2">
                   <span className="h-2.5 w-2.5 rounded-full bg-green-500" />
-                  Approved — ready for publication
+                  Approved â€” ready for publication
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
-                  Published — available to students
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#F7F1E7]0" />
+                  Published â€” available to students
                 </div>
               </div>
             </section>
 
             {/* Student Results */}
-            <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-              <div className="border-b border-slate-200 px-5 py-5">
-                <h2 className="text-lg font-bold text-slate-950">
+            <section className="overflow-hidden rounded-xl border border-[#C8A878] bg-[#FFFCF7] shadow-sm">
+              <div className="border-b border-[#C8A878] px-5 py-5">
+                <h2 className="text-lg font-bold text-[#2B211C]">
                   Student Results
                 </h2>
 
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm text-[#7A5038]">
                   Each student appears once. Open a student to
                   review their complete report sheet and manage
                   the result workflow.
@@ -755,15 +755,15 @@ export default async function AdminResultsPage({
 
               {filteredResults.length === 0 ? (
                 <div className="px-6 py-16 text-center">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-xl">
-                    🔍
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#EFE3D0] text-xl">
+                    ðŸ”
                   </div>
 
-                  <h3 className="mt-4 text-lg font-bold text-slate-900">
+                  <h3 className="mt-4 text-lg font-bold text-[#2B211C]">
                     No students found
                   </h3>
 
-                  <p className="mx-auto mt-2 max-w-lg text-sm text-slate-500">
+                  <p className="mx-auto mt-2 max-w-lg text-sm text-[#7A5038]">
                     {searchTerm
                       ? `No student result matches "${searchTerm}". Try another name, admission number or class.`
                       : "There are currently no results in the review workflow."}
@@ -772,39 +772,39 @@ export default async function AdminResultsPage({
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[1000px] text-left text-sm">
-                    <thead className="border-b border-slate-200 bg-slate-50">
+                    <thead className="border-b border-[#C8A878] bg-[#F7F1E7]">
                       <tr>
-                        <th className="px-5 py-4 font-semibold text-slate-700">
+                        <th className="px-5 py-4 font-semibold text-[#4A2C20]">
                           Student
                         </th>
 
-                        <th className="px-5 py-4 font-semibold text-slate-700">
+                        <th className="px-5 py-4 font-semibold text-[#4A2C20]">
                           Admission No.
                         </th>
 
-                        <th className="px-5 py-4 font-semibold text-slate-700">
+                        <th className="px-5 py-4 font-semibold text-[#4A2C20]">
                           Class
                         </th>
 
-                        <th className="px-5 py-4 font-semibold text-slate-700">
+                        <th className="px-5 py-4 font-semibold text-[#4A2C20]">
                           Term
                         </th>
 
-                        <th className="px-5 py-4 font-semibold text-slate-700">
+                        <th className="px-5 py-4 font-semibold text-[#4A2C20]">
                           Subjects
                         </th>
 
-                        <th className="px-5 py-4 font-semibold text-slate-700">
+                        <th className="px-5 py-4 font-semibold text-[#4A2C20]">
                           Status
                         </th>
 
-                        <th className="px-5 py-4 text-right font-semibold text-slate-700">
+                        <th className="px-5 py-4 text-right font-semibold text-[#4A2C20]">
                           Action
                         </th>
                       </tr>
                     </thead>
 
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-[#C8A878]">
                       {filteredResults.map((student) => {
                         const fullName = [
                           student.firstName,
@@ -820,7 +820,7 @@ export default async function AdminResultsPage({
                           student.stream,
                         ]
                           .filter(Boolean)
-                          .join(" — ");
+                          .join(" â€” ");
 
                         const status =
                           student.overallStatus;
@@ -828,11 +828,11 @@ export default async function AdminResultsPage({
                         return (
                           <tr
                             key={student.enrollmentId}
-                            className="bg-white transition hover:bg-slate-50"
+                            className="bg-[#FFFCF7] transition hover:bg-[#F7F1E7]"
                           >
                             <td className="px-5 py-5">
                               <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-900 text-sm font-bold text-white">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#4A2C20] text-sm font-bold text-white">
                                   {student.firstName
                                     .charAt(0)
                                     .toUpperCase()}
@@ -842,37 +842,37 @@ export default async function AdminResultsPage({
                                 </div>
 
                                 <div>
-                                  <p className="font-semibold text-slate-950">
+                                  <p className="font-semibold text-[#2B211C]">
                                     {fullName}
                                   </p>
 
-                                  <p className="mt-1 text-xs text-slate-500">
+                                  <p className="mt-1 text-xs text-[#7A5038]">
                                     Student Result
                                   </p>
                                 </div>
                               </div>
                             </td>
 
-                            <td className="px-5 py-5 font-medium text-slate-700">
+                            <td className="px-5 py-5 font-medium text-[#4A2C20]">
                               {student.admissionNo}
                             </td>
 
                             <td className="px-5 py-5">
-                              <p className="font-semibold text-slate-800">
+                              <p className="font-semibold text-[#4A2C20]">
                                 {classDisplay}
                               </p>
                             </td>
 
-                            <td className="px-5 py-5 text-slate-700">
+                            <td className="px-5 py-5 text-[#4A2C20]">
                               {termLabel(student.term)}
                             </td>
 
                             <td className="px-5 py-5">
-                              <span className="font-semibold text-slate-900">
+                              <span className="font-semibold text-[#2B211C]">
                                 {student.subjectCount}
                               </span>
 
-                              <span className="ml-1 text-slate-500">
+                              <span className="ml-1 text-[#7A5038]">
                                 {student.subjectCount === 1
                                   ? "subject"
                                   : "subjects"}
@@ -892,9 +892,9 @@ export default async function AdminResultsPage({
                             <td className="px-5 py-5 text-right">
                               <Link
                                 href={`/admin/results/${student.enrollmentId}`}
-                                className="inline-flex items-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700"
+                                className="inline-flex items-center rounded-lg bg-[#4A2C20] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4A2C20]"
                               >
-                                View Result →
+                                View Result â†’
                               </Link>
                             </td>
                           </tr>
@@ -908,18 +908,18 @@ export default async function AdminResultsPage({
 
             {/* Information */}
             {filteredResults.length > 0 && (
-              <div className="mt-5 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="mt-5 rounded-xl border border-[#C8A878] bg-[#FFFCF7] p-5 shadow-sm">
                 <div className="flex gap-3">
-                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-700">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#EFE3D0] text-sm font-bold text-[#4A2C20]">
                     i
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-slate-900">
+                    <h3 className="font-semibold text-[#2B211C]">
                       How result review works
                     </h3>
 
-                    <p className="mt-1 text-sm leading-6 text-slate-500">
+                    <p className="mt-1 text-sm leading-6 text-[#7A5038]">
                       Select a student to open their complete
                       school report sheet. Submitted results can
                       be approved or rejected. Approved results
