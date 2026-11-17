@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -340,6 +342,9 @@ export async function POST(request: Request) {
       };
     });
 
+    // Refresh the admin students page after registration.
+    revalidatePath("/admin/students");
+
     return NextResponse.json(
       {
         message:
@@ -572,6 +577,9 @@ export async function PATCH(request: Request) {
 
       return updated;
     });
+
+    // Refresh the admin students page after an update.
+    revalidatePath("/admin/students");
 
     return NextResponse.json({
       message: "Student updated successfully.",

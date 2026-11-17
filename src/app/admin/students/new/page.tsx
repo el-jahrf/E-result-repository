@@ -2,7 +2,6 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 type SessionOption = {
   id: string;
@@ -175,8 +174,6 @@ const terms = [
 ];
 
 export default function NewStudentPage() {
-  const router = useRouter();
-
   const [form, setForm] = useState({
     admissionNo: "",
     firstName: "",
@@ -355,8 +352,7 @@ export default function NewStudentPage() {
         return;
       }
 
-      router.push("/admin/students");
-      router.refresh();
+      window.location.replace("/admin/students");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {

@@ -2,6 +2,9 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import DeleteStudentButton from "./DeleteStudentButton";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 function Icon({
   name,
 }: {
