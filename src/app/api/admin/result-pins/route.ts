@@ -25,12 +25,17 @@ async function createUniquePin() {
       select: { id: true },
     });
 
-    if (!existing) {
-      return pin;
-    }
+    if (!existing) return pin;
   }
 
   throw new Error("Unable to generate a unique PIN.");
+}
+
+function unauthorized() {
+  return NextResponse.json(
+    { success: false, error: "Unauthorized." },
+    { status: 401 }
+  );
 }
 
 export async function GET(request: Request) {
@@ -38,26 +43,22 @@ export async function GET(request: Request) {
     const session = await auth();
 
     if (!session?.user?.id || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Unauthorized.",
-        },
-        { status: 401 }
-      );
+      return unauthorized();
     }
 
     const { searchParams } = new URL(request.url);
-
     const sessionId = searchParams.get("sessionId");
     const term = searchParams.get("term");
+
+    const validTerm =
+      term && TERMS.includes(term as (typeof TERMS)[number])
+        ? (term as (typeof TERMS)[number])
+        : undefined;
 
     const resultPins = await prisma.resultPin.findMany({
       where: {
         ...(sessionId ? { sessionId } : {}),
-        ...(term && TERMS.includes(term as (typeof TERMS)[number])
-          ? { term: term as (typeof TERMS)[number] }
-          : {}),
+        ...(validTerm ? { term: validTerm } : {}),
       },
       include: {
         student: {
@@ -67,6 +68,24 @@ export async function GET(request: Request) {
             firstName: true,
             middleName: true,
             lastName: true,
+            enrollments: {
+              where: {
+                ...(sessionId ? { sessionId } : {}),
+                ...(validTerm ? { term: validTerm } : {}),
+              },
+              select: {
+                class: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                    arm: true,
+                    stream: true,
+                    section: true,
+                  },
+                },
+              },
+            },
           },
         },
         session: {
@@ -103,13 +122,7 @@ export async function POST(request: Request) {
     const session = await auth();
 
     if (!session?.user?.id || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Unauthorized.",
-        },
-        { status: 401 }
-      );
+      return unauthorized();
     }
 
     const body = await request.json();
@@ -135,60 +148,40 @@ export async function POST(request: Request) {
 
     if (!TERMS.includes(term)) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Invalid term.",
-        },
+        { success: false, error: "Invalid term." },
         { status: 400 }
       );
     }
 
     if (!["student", "class", "all"].includes(mode)) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Invalid generation mode.",
-        },
+        { success: false, error: "Invalid generation mode." },
         { status: 400 }
       );
     }
 
     if (mode === "student" && !studentId) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Student is required.",
-        },
+        { success: false, error: "Student is required." },
         { status: 400 }
       );
     }
 
     if (mode === "class" && !classId) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Class is required.",
-        },
+        { success: false, error: "Class is required." },
         { status: 400 }
       );
     }
 
     const academicSession = await prisma.academicSession.findUnique({
-      where: {
-        id: sessionId,
-      },
-      select: {
-        id: true,
-        name: true,
-      },
+      where: { id: sessionId },
+      select: { id: true },
     });
 
     if (!academicSession) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Academic session not found.",
-        },
+        { success: false, error: "Academic session not found." },
         { status: 404 }
       );
     }
@@ -197,13 +190,8 @@ export async function POST(request: Request) {
 
     if (mode === "student") {
       const student = await prisma.student.findUnique({
-        where: {
-          id: studentId,
-        },
-        select: {
-          id: true,
-          isActive: true,
-        },
+        where: { id: studentId },
+        select: { id: true, isActive: true },
       });
 
       if (!student || !student.isActive) {
@@ -225,13 +213,9 @@ export async function POST(request: Request) {
           classId,
           sessionId,
           term,
-          student: {
-            isActive: true,
-          },
+          student: { isActive: true },
         },
-        select: {
-          studentId: true,
-        },
+        select: { studentId: true },
         distinct: ["studentId"],
       });
 
@@ -243,13 +227,9 @@ export async function POST(request: Request) {
         where: {
           sessionId,
           term,
-          student: {
-            isActive: true,
-          },
+          student: { isActive: true },
         },
-        select: {
-          studentId: true,
-        },
+        select: { studentId: true },
         distinct: ["studentId"],
       });
 
@@ -277,9 +257,7 @@ export async function POST(request: Request) {
           term,
           isActive: true,
         },
-        orderBy: {
-          createdAt: "desc",
-        },
+        orderBy: { createdAt: "desc" },
       });
 
       if (existingActivePin) {
@@ -296,7 +274,9 @@ export async function POST(request: Request) {
           sessionId,
           term,
           maxUses:
-            typeof maxUses === "number" && maxUses > 0 ? maxUses : 5,
+            typeof maxUses === "number" && maxUses > 0
+              ? Math.min(Math.floor(maxUses), 99)
+              : 5,
           usedCount: 0,
           isActive: true,
         },
@@ -348,17 +328,10 @@ export async function PATCH(request: Request) {
     const session = await auth();
 
     if (!session?.user?.id || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Unauthorized.",
-        },
-        { status: 401 }
-      );
+      return unauthorized();
     }
 
     const body = await request.json();
-
     const { id, isActive } = body;
 
     if (!id || typeof isActive !== "boolean") {
@@ -372,12 +345,8 @@ export async function PATCH(request: Request) {
     }
 
     const resultPin = await prisma.resultPin.update({
-      where: {
-        id,
-      },
-      data: {
-        isActive,
-      },
+      where: { id },
+      data: { isActive },
     });
 
     return NextResponse.json({
