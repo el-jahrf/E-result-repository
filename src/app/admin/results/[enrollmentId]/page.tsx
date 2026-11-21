@@ -3,11 +3,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import SignaturePad from "./signature-pad";
 
 type PageProps = {
-  params: Promise<{
-    enrollmentId: string;
-  }>;
+  params: Promise<{ enrollmentId: string }>;
 };
 
 type ResultStatus =
@@ -17,14 +16,12 @@ type ResultStatus =
   | "PUBLISHED"
   | "REJECTED";
 
-async function updateResultStatus(formData: FormData) {
+async function savePrincipalComment(formData: FormData) {
   "use server";
 
   const session = await auth();
 
-  if (!session?.user) {
-    redirect("/login");
-  }
+  if (!session?.user) redirect("/login");
 
   if (
     session.user.role !== "ADMIN" &&
@@ -33,44 +30,93 @@ async function updateResultStatus(formData: FormData) {
     redirect("/");
   }
 
-  const enrollmentId = String(
-    formData.get("enrollmentId") ?? "",
+  const enrollmentId = String(formData.get("enrollmentId") ?? "");
+  const comment = String(
+    formData.get("headTeacherComment") ?? "",
+  ).trim();
+  const signatureData = String(
+    formData.get("signatureData") ?? "",
   );
 
+  if (!enrollmentId || !comment || !signatureData) {
+    redirect(`/admin/results/${enrollmentId}?error=missing-fields`);
+  }
+
+  if (
+    !signatureData.startsWith("data:image/png;base64,") ||
+    signatureData.length > 2_000_000
+  ) {
+    redirect(`/admin/results/${enrollmentId}?error=invalid-signature`);
+  }
+
+  const enrollment = await prisma.enrollment.findUnique({
+    where: { id: enrollmentId },
+    select: { id: true },
+  });
+
+  if (!enrollment) redirect("/admin/results");
+
+  await prisma.termSummary.upsert({
+    where: { enrollmentId },
+    update: {
+      headTeacherComment: comment,
+      headTeacherSignatureData: signatureData,
+      headTeacherSignedAt: new Date(),
+    },
+    create: {
+      id: crypto.randomUUID(),
+      enrollmentId,
+      headTeacherComment: comment,
+      headTeacherSignatureData: signatureData,
+      headTeacherSignedAt: new Date(),
+    },
+  });
+
+  revalidatePath("/admin/results");
+  revalidatePath(`/admin/results/${enrollmentId}`);
+  revalidatePath("/student/results");
+
+  redirect(`/admin/results/${enrollmentId}?saved=signature`);
+}
+
+async function updateResultStatus(formData: FormData) {
+  "use server";
+
+  const session = await auth();
+
+  if (!session?.user) redirect("/login");
+
+  if (
+    session.user.role !== "ADMIN" &&
+    session.user.role !== "PRINCIPAL"
+  ) {
+    redirect("/");
+  }
+
+  const enrollmentId = String(formData.get("enrollmentId") ?? "");
   const action = String(formData.get("action") ?? "");
 
-  if (!enrollmentId) {
-    redirect("/admin/results");
-  }
+  if (!enrollmentId) redirect("/admin/results");
 
   if (!["APPROVE", "REJECT", "PUBLISH"].includes(action)) {
     redirect(`/admin/results/${enrollmentId}`);
   }
 
   const enrollment = await prisma.enrollment.findUnique({
-    where: {
-      id: enrollmentId,
-    },
+    where: { id: enrollmentId },
     include: {
       student: true,
-      class: true,
-      session: true,
       results: {
         orderBy: {
-          subject: {
-            name: "asc",
-          },
+          subject: { name: "asc" },
         },
-        include: {
-          subject: true,
-        },
+        include: { subject: true },
       },
+      TermSummary: true,
     },
   });
 
-  if (!enrollment) {
-    redirect("/admin/results");
-  }
+  if (!enrollment) redirect("/admin/results");
 
   if (enrollment.results.length === 0) {
     redirect(`/admin/results/${enrollmentId}`);
@@ -80,11 +126,20 @@ async function updateResultStatus(formData: FormData) {
     (result) => result.status as ResultStatus,
   );
 
-  /*
-   * APPROVE
-   *
-   * Every subject result must be SUBMITTED.
-   */
+  if (action === "APPROVE" || action === "PUBLISH") {
+    const hasOfficialComment =
+      Boolean(enrollment.TermSummary?.headTeacherComment?.trim());
+
+    const hasOfficialSignature =
+      Boolean(enrollment.TermSummary?.headTeacherSignatureData);
+
+    if (!hasOfficialComment || !hasOfficialSignature) {
+      redirect(
+        `/admin/results/${enrollmentId}?error=signature-required`,
+      );
+    }
+  }
+
   if (action === "APPROVE") {
     const canApprove =
       statuses.length > 0 &&
@@ -96,9 +151,7 @@ async function updateResultStatus(formData: FormData) {
 
     await prisma.$transaction(async (tx) => {
       await tx.result.updateMany({
-        where: {
-          enrollmentId,
-        },
+        where: { enrollmentId },
         data: {
           status: "APPROVED",
           approvedAt: new Date(),
@@ -115,8 +168,6 @@ async function updateResultStatus(formData: FormData) {
           entityId: enrollmentId,
           details: {
             studentId: enrollment.studentId,
-            sessionId: enrollment.sessionId,
-            term: enrollment.term,
             resultCount: enrollment.results.length,
           },
         },
@@ -124,22 +175,12 @@ async function updateResultStatus(formData: FormData) {
     });
   }
 
-  /*
-   * REJECT / RETURN
-   *
-   * Submitted or approved results can be returned to the
-   * teacher for correction.
-   *
-   * The teacher can then edit the rejected result and
-   * submit it again.
-   */
   if (action === "REJECT") {
     const canReject =
       statuses.length > 0 &&
       statuses.every(
         (status) =>
-          status === "SUBMITTED" ||
-          status === "APPROVED",
+          status === "SUBMITTED" || status === "APPROVED",
       );
 
     if (!canReject) {
@@ -148,9 +189,7 @@ async function updateResultStatus(formData: FormData) {
 
     await prisma.$transaction(async (tx) => {
       await tx.result.updateMany({
-        where: {
-          enrollmentId,
-        },
+        where: { enrollmentId },
         data: {
           status: "REJECTED",
           approvedAt: null,
@@ -167,8 +206,6 @@ async function updateResultStatus(formData: FormData) {
           entityId: enrollmentId,
           details: {
             studentId: enrollment.studentId,
-            sessionId: enrollment.sessionId,
-            term: enrollment.term,
             resultCount: enrollment.results.length,
           },
         },
@@ -176,11 +213,6 @@ async function updateResultStatus(formData: FormData) {
     });
   }
 
-  /*
-   * PUBLISH
-   *
-   * Every subject result must already be APPROVED.
-   */
   if (action === "PUBLISH") {
     const canPublish =
       statuses.length > 0 &&
@@ -192,9 +224,7 @@ async function updateResultStatus(formData: FormData) {
 
     await prisma.$transaction(async (tx) => {
       await tx.result.updateMany({
-        where: {
-          enrollmentId,
-        },
+        where: { enrollmentId },
         data: {
           status: "PUBLISHED",
           publishedAt: new Date(),
@@ -210,8 +240,6 @@ async function updateResultStatus(formData: FormData) {
           entityId: enrollmentId,
           details: {
             studentId: enrollment.studentId,
-            sessionId: enrollment.sessionId,
-            term: enrollment.term,
             resultCount: enrollment.results.length,
           },
         },
@@ -221,6 +249,7 @@ async function updateResultStatus(formData: FormData) {
 
   revalidatePath("/admin/results");
   revalidatePath(`/admin/results/${enrollmentId}`);
+  revalidatePath("/student/results");
 
   redirect(`/admin/results/${enrollmentId}`);
 }
@@ -239,9 +268,7 @@ function formatTerm(term: string) {
 }
 
 function formatDate(date: Date | null | undefined) {
-  if (!date) {
-    return "—";
-  }
+  if (!date) return "—";
 
   return new Intl.DateTimeFormat("en-NG", {
     day: "2-digit",
@@ -251,19 +278,24 @@ function formatDate(date: Date | null | undefined) {
 }
 
 function formatScore(value: unknown) {
-  if (value === null || value === undefined) {
-    return "—";
-  }
+  if (value === null || value === undefined) return "—";
 
   const number = Number(value);
 
-  if (!Number.isFinite(number)) {
-    return "—";
-  }
+  if (!Number.isFinite(number)) return "—";
 
   return Number.isInteger(number)
     ? String(number)
     : number.toFixed(1);
+}
+
+function gradeFor(score: number) {
+  if (score >= 75) return "A";
+  if (score >= 65) return "B";
+  if (score >= 55) return "C";
+  if (score >= 45) return "D";
+  if (score >= 40) return "E";
+  return "F";
 }
 
 function statusLabel(status: string) {
@@ -289,27 +321,20 @@ function statusClasses(status: string) {
   switch (status) {
     case "PUBLISHED":
       return "bg-gray-900 text-white";
-
     case "APPROVED":
       return "bg-green-100 text-green-800";
-
     case "REJECTED":
       return "bg-red-100 text-red-700";
-
     case "SUBMITTED":
       return "bg-yellow-100 text-yellow-800";
-
     case "IN_REVIEW":
       return "bg-gray-200 text-gray-800";
-
     default:
       return "bg-gray-100 text-gray-600";
   }
 }
 
-function getOverallStatus(
-  statuses: ResultStatus[],
-) {
+function getOverallStatus(statuses: ResultStatus[]) {
   if (
     statuses.length > 0 &&
     statuses.every((status) => status === "PUBLISHED")
@@ -357,9 +382,7 @@ export default async function AdminStudentResultPage({
 }: PageProps) {
   const session = await auth();
 
-  if (!session?.user) {
-    redirect("/login");
-  }
+  if (!session?.user) redirect("/login");
 
   if (
     session.user.role !== "ADMIN" &&
@@ -371,18 +394,14 @@ export default async function AdminStudentResultPage({
   const { enrollmentId } = await params;
 
   const enrollment = await prisma.enrollment.findUnique({
-    where: {
-      id: enrollmentId,
-    },
+    where: { id: enrollmentId },
     include: {
       student: true,
       class: true,
       session: true,
       results: {
         orderBy: {
-          subject: {
-            name: "asc",
-          },
+          subject: { name: "asc" },
         },
         include: {
           subject: true,
@@ -392,18 +411,14 @@ export default async function AdminStudentResultPage({
       TermSummary: {
         include: {
           AffectiveRatingRecord: {
-            orderBy: {
-              item: "asc",
-            },
+            orderBy: { item: "asc" },
           },
         },
       },
     },
   });
 
-  if (!enrollment) {
-    redirect("/admin/results");
-  }
+  if (!enrollment) redirect("/admin/results");
 
   if (enrollment.results.length === 0) {
     return (
@@ -417,13 +432,10 @@ export default async function AdminStudentResultPage({
           </Link>
 
           <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-10 text-center shadow-sm">
-            <h1 className="text-2xl font-bold">
-              No Result Found
-            </h1>
-
+            <h1 className="text-2xl font-bold">No Result Found</h1>
             <p className="mt-2 text-gray-500">
-              This student does not have any result entries for
-              this enrollment yet.
+              This student does not have any result entries for this
+              enrollment yet.
             </p>
           </div>
         </div>
@@ -441,18 +453,13 @@ export default async function AdminStudentResultPage({
 
   const overallTotal =
     totalScores.length > 0
-      ? totalScores.reduce(
-          (sum, value) => sum + value,
-          0,
-        )
+      ? totalScores.reduce((sum, value) => sum + value, 0)
       : null;
 
   const studentAverage =
     totalScores.length > 0
-      ? totalScores.reduce(
-          (sum, value) => sum + value,
-          0,
-        ) / totalScores.length
+      ? totalScores.reduce((sum, value) => sum + value, 0) /
+        totalScores.length
       : null;
 
   const performanceRate =
@@ -467,21 +474,15 @@ export default async function AdminStudentResultPage({
 
   const allPublished =
     currentStatuses.length > 0 &&
-    currentStatuses.every(
-      (status) => status === "PUBLISHED",
-    );
+    currentStatuses.every((status) => status === "PUBLISHED");
 
   const allApproved =
     currentStatuses.length > 0 &&
-    currentStatuses.every(
-      (status) => status === "APPROVED",
-    );
+    currentStatuses.every((status) => status === "APPROVED");
 
   const allSubmitted =
     currentStatuses.length > 0 &&
-    currentStatuses.every(
-      (status) => status === "SUBMITTED",
-    );
+    currentStatuses.every((status) => status === "SUBMITTED");
 
   const hasSubmitted = currentStatuses.some(
     (status) => status === "SUBMITTED",
@@ -500,12 +501,10 @@ export default async function AdminStudentResultPage({
     currentStatuses.length > 0 &&
     currentStatuses.every(
       (status) =>
-        status === "SUBMITTED" ||
-        status === "APPROVED",
+        status === "SUBMITTED" || status === "APPROVED",
     );
 
-  const overallStatus =
-    getOverallStatus(currentStatuses);
+  const overallStatus = getOverallStatus(currentStatuses);
 
   const classAverage =
     summary?.classScoringAverage !== null &&
@@ -513,9 +512,38 @@ export default async function AdminStudentResultPage({
       ? Number(summary.classScoringAverage)
       : null;
 
+  const classTeacherComment =
+    summary?.classTeacherComment ??
+    summary?.teacherComment ??
+    null;
+
+  const classTeacherSignature =
+    summary?.classTeacherSignatureData ?? null;
+
+  const principalComment = summary?.headTeacherComment ?? "";
+
+  const principalSignature =
+    summary?.headTeacherSignatureData ?? null;
+
+  const hasOfficialSignOff =
+    Boolean(principalComment.trim()) &&
+    Boolean(principalSignature);
+
+  // FIRST term -> Second Term date.
+  // SECOND term -> Third Term date.
+  // THIRD term -> First Term date of the next academic cycle.
+  const nextTermResumptionDate =
+    enrollment.term === "FIRST"
+      ? enrollment.session.secondTermResumptionDate
+      : enrollment.term === "SECOND"
+        ? enrollment.session.thirdTermResumptionDate
+        : enrollment.term === "THIRD"
+          ? enrollment.session.firstTermResumptionDate
+          : null;
+
   return (
     <main className="min-h-screen bg-[#f7f8fa] text-gray-900">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:px-10 lg:py-10">
         <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center print:hidden">
           <div>
             <Link
@@ -530,15 +558,13 @@ export default async function AdminStudentResultPage({
             </h1>
 
             <p className="mt-1 text-sm text-gray-500">
-              Review the complete result before approving or
-              publishing it.
+              Review the complete result before approving or publishing
+              it.
             </p>
           </div>
 
           <div className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm">
-            <span className="text-gray-500">
-              Reviewing as:
-            </span>{" "}
+            <span className="text-gray-500">Reviewing as:</span>{" "}
             <span className="font-semibold">
               {session.user.role === "PRINCIPAL"
                 ? "Principal"
@@ -570,16 +596,12 @@ export default async function AdminStudentResultPage({
 
               <div className="mt-5 grid w-full max-w-2xl grid-cols-1 gap-2 text-sm sm:grid-cols-2">
                 <div>
-                  <span className="font-semibold">
-                    Academic Session:
-                  </span>{" "}
+                  <span className="font-semibold">Academic Session:</span>{" "}
                   {enrollment.session.name}
                 </div>
 
                 <div>
-                  <span className="font-semibold">
-                    Term:
-                  </span>{" "}
+                  <span className="font-semibold">Term:</span>{" "}
                   {formatTerm(enrollment.term)}
                 </div>
               </div>
@@ -603,18 +625,12 @@ export default async function AdminStudentResultPage({
                   value={student.admissionNo}
                 />
 
-                <InfoField
-                  label="Class"
-                  value={schoolClass.name}
-                />
+                <InfoField label="Class" value={schoolClass.name} />
 
                 <InfoField
                   label="Arm / Stream"
                   value={
-                    [
-                      schoolClass.arm,
-                      schoolClass.stream,
-                    ]
+                    [schoolClass.arm, schoolClass.stream]
                       .filter(Boolean)
                       .join(" / ") || "—"
                   }
@@ -633,9 +649,7 @@ export default async function AdminStudentResultPage({
 
                 <InfoField
                   label="Date of Birth"
-                  value={formatDate(
-                    student.dateOfBirth,
-                  )}
+                  value={formatDate(student.dateOfBirth)}
                 />
               </div>
 
@@ -657,8 +671,7 @@ export default async function AdminStudentResultPage({
                 </p>
 
                 <p className="mt-1 text-sm text-gray-600">
-                  This status applies to the complete student
-                  result.
+                  This status applies to the complete student result.
                 </p>
               </div>
 
@@ -684,7 +697,7 @@ export default async function AdminStudentResultPage({
             </div>
 
             <div className="overflow-x-auto border border-gray-300">
-              <table className="w-full min-w-[900px] border-collapse text-sm">
+              <table className="w-full min-w-[1050px] border-collapse text-sm">
                 <thead>
                   <tr className="bg-gray-100">
                     <th className="border border-gray-300 px-3 py-3 text-left font-bold">
@@ -711,49 +724,78 @@ export default async function AdminStudentResultPage({
                     <th className="border border-gray-300 px-3 py-3 text-left font-bold">
                       Remark
                     </th>
+                    <th className="border border-gray-300 px-3 py-3 text-center font-bold">
+                      Subject Teacher Signature
+                    </th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {enrollment.results.map((result) => (
-                    <tr key={result.id}>
-                      <td className="border border-gray-300 px-3 py-3 font-medium">
-                        <div>{result.subject.name}</div>
+                  {enrollment.results.map((result) => {
+                    const score = Number(result.totalScore);
+                    const grade =
+                      result.grade?.trim() ||
+                      (Number.isFinite(score) ? gradeFor(score) : "—");
 
-                        <div className="text-xs text-gray-400">
-                          {result.subject.code}
-                        </div>
-                      </td>
+                    const teacherSignature =
+                      result.teacherSignatureSnapshotUrl ||
+                      result.teacher?.signatureData ||
+                      result.teacher?.signatureUrl ||
+                      null;
 
-                      <td className="border border-gray-300 px-3 py-3 text-center">
-                        {formatScore(result.ca1Score)}
-                      </td>
+                    return (
+                      <tr key={result.id}>
+                        <td className="border border-gray-300 px-3 py-3 font-medium">
+                          <div>{result.subject.name}</div>
+                          <div className="text-xs text-gray-400">
+                            {result.subject.code}
+                          </div>
+                        </td>
 
-                      <td className="border border-gray-300 px-3 py-3 text-center">
-                        {formatScore(result.ca2Score)}
-                      </td>
+                        <td className="border border-gray-300 px-3 py-3 text-center">
+                          {formatScore(result.ca1Score)}
+                        </td>
 
-                      <td className="border border-gray-300 px-3 py-3 text-center">
-                        {formatScore(result.caTotal)}
-                      </td>
+                        <td className="border border-gray-300 px-3 py-3 text-center">
+                          {formatScore(result.ca2Score)}
+                        </td>
 
-                      <td className="border border-gray-300 px-3 py-3 text-center">
-                        {formatScore(result.examScore)}
-                      </td>
+                        <td className="border border-gray-300 px-3 py-3 text-center">
+                          {formatScore(result.caTotal)}
+                        </td>
 
-                      <td className="border border-gray-300 px-3 py-3 text-center font-bold">
-                        {formatScore(result.totalScore)}
-                      </td>
+                        <td className="border border-gray-300 px-3 py-3 text-center">
+                          {formatScore(result.examScore)}
+                        </td>
 
-                      <td className="border border-gray-300 px-3 py-3 text-center font-semibold">
-                        {result.grade ?? "—"}
-                      </td>
+                        <td className="border border-gray-300 px-3 py-3 text-center font-bold">
+                          {formatScore(result.totalScore)}
+                        </td>
 
-                      <td className="border border-gray-300 px-3 py-3">
-                        {result.remark ?? "—"}
-                      </td>
-                    </tr>
-                  ))}
+                        <td className="border border-gray-300 px-3 py-3 text-center font-semibold">
+                          {grade}
+                        </td>
+
+                        <td className="border border-gray-300 px-3 py-3">
+                          {result.teacherRemark ?? result.remark ?? "—"}
+                        </td>
+
+                        <td className="border border-gray-300 px-3 py-3 text-center">
+                          {teacherSignature ? (
+                            <img
+                              src={teacherSignature}
+                              alt="Subject teacher signature"
+                              className="mx-auto h-12 max-w-28 object-contain"
+                            />
+                          ) : (
+                            <span className="text-xs text-gray-400">
+                              —
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -816,17 +858,13 @@ export default async function AdminStudentResultPage({
 
               <SummaryCard
                 label="Subjects"
-                value={String(
-                  enrollment.results.length,
-                )}
+                value={String(enrollment.results.length)}
               />
             </div>
           </section>
 
           <section className="border-t border-gray-300 px-6 py-8 sm:px-10">
-            <h3 className="mb-5 text-lg font-bold">
-              Attendance
-            </h3>
+            <h3 className="mb-5 text-lg font-bold">Attendance</h3>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <SummaryCard
@@ -834,9 +872,7 @@ export default async function AdminStudentResultPage({
                 value={
                   enrollment.attendanceOpened !== null &&
                   enrollment.attendanceOpened !== undefined
-                    ? String(
-                        enrollment.attendanceOpened,
-                      )
+                    ? String(enrollment.attendanceOpened)
                     : "—"
                 }
               />
@@ -846,9 +882,7 @@ export default async function AdminStudentResultPage({
                 value={
                   enrollment.attendancePresent !== null &&
                   enrollment.attendancePresent !== undefined
-                    ? String(
-                        enrollment.attendancePresent,
-                      )
+                    ? String(enrollment.attendancePresent)
                     : "—"
                 }
               />
@@ -858,9 +892,7 @@ export default async function AdminStudentResultPage({
                 value={
                   enrollment.attendanceAbsent !== null &&
                   enrollment.attendanceAbsent !== undefined
-                    ? String(
-                        enrollment.attendanceAbsent,
-                      )
+                    ? String(enrollment.attendanceAbsent)
                     : "—"
                 }
               />
@@ -887,83 +919,122 @@ export default async function AdminStudentResultPage({
             {summary?.AffectiveRatingRecord &&
             summary.AffectiveRatingRecord.length > 0 ? (
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {summary.AffectiveRatingRecord.map(
-                  (rating) => (
-                    <div
-                      key={rating.id}
-                      className="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3"
-                    >
-                      <span className="text-sm font-medium">
-                        {rating.item}
-                      </span>
+                {summary.AffectiveRatingRecord.map((rating) => (
+                  <div
+                    key={rating.id}
+                    className="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3"
+                  >
+                    <span className="text-sm font-medium">
+                      {rating.item}
+                    </span>
 
-                      <span className="font-bold">
-                        {rating.rating}
-                      </span>
-                    </div>
-                  ),
-                )}
+                    <span className="font-bold">{rating.rating}</span>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-6 text-sm text-gray-500">
-                No affective or behavioural assessment has
-                been entered yet.
+                No affective or behavioural assessment has been entered
+                yet.
               </div>
             )}
           </section>
 
           <section className="border-t border-gray-300 px-6 py-8 sm:px-10">
-            <h3 className="mb-5 text-lg font-bold">
-              Comments
-            </h3>
+            <h3 className="mb-5 text-lg font-bold">Comments</h3>
 
             <div className="grid gap-5 lg:grid-cols-2">
               <CommentBox
-                label="Class Teacher's Comment"
-                value={summary?.teacherComment}
+                label="Class Teacher / Form Master's Comment"
+                value={classTeacherComment}
               />
 
-              <CommentBox
-                label="Principal / Head Teacher's Comment"
-                value={summary?.headTeacherComment}
-              />
+              <div>
+                <p className="mb-2 text-sm font-semibold">
+                  Principal / Head Teacher's Comment
+                </p>
+
+                <form
+                  action={savePrincipalComment}
+                  className="space-y-4 print:hidden"
+                >
+                  <input
+                    type="hidden"
+                    name="enrollmentId"
+                    value={enrollmentId}
+                  />
+
+                  <textarea
+                    name="headTeacherComment"
+                    defaultValue={principalComment}
+                    required
+                    rows={4}
+                    placeholder="Click here and enter the official comment..."
+                    className="min-h-28 w-full rounded-xl border border-gray-300 bg-white p-4 text-sm leading-6 text-gray-700 outline-none focus:border-gray-700 focus:ring-2 focus:ring-gray-200"
+                  />
+
+                  <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                    <p className="mb-3 text-sm font-semibold">
+                      Official Digital Signature
+                    </p>
+
+                    <SignaturePad
+                      name="signatureData"
+                      initialValue={principalSignature}
+                    />
+
+                    {principalSignature && (
+                      <p className="mt-2 text-xs text-green-700">
+                        A signature is already saved for this student's
+                        result. You can draw a new one if necessary.
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-gray-700"
+                  >
+                    Save Comment & Signature
+                  </button>
+                </form>
+
+                <div className="hidden min-h-28 rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm leading-6 print:block">
+                  {principalComment || "No comment entered yet."}
+                </div>
+              </div>
             </div>
 
             <div className="mt-5 max-w-md">
               <InfoField
                 label="Next Term Begins"
-                value={formatDate(
-                  summary?.nextTermDate,
-                )}
+                value={formatDate(nextTermResumptionDate)}
               />
             </div>
           </section>
 
           <section className="border-t border-gray-300 px-6 py-8 sm:px-10">
             <h3 className="mb-6 text-lg font-bold">
-              Approval & Publication
+              Signatures & Publication
             </h3>
 
             <div className="grid gap-6 md:grid-cols-3">
               <SignatureBox
-                label="Class Teacher"
-                signed={Boolean(
-                  summary?.teacherSignedAt,
-                )}
-                date={summary?.teacherSignedAt}
+                label="Class Teacher / Form Master"
+                signed={Boolean(summary?.classTeacherSignedAt)}
+                date={summary?.classTeacherSignedAt}
+                signature={classTeacherSignature}
               />
 
               <SignatureBox
                 label="Principal / Head Teacher"
-                signed={Boolean(
-                  summary?.headTeacherSignedAt,
-                )}
+                signed={Boolean(summary?.headTeacherSignedAt)}
                 date={summary?.headTeacherSignedAt}
+                signature={principalSignature}
               />
 
-              <SignatureBox
-                label="Published Result"
-                signed={allPublished}
+              <PublishedResultBox
+                published={allPublished}
                 date={
                   enrollment.results.find(
                     (result) => result.publishedAt,
@@ -983,10 +1054,17 @@ export default async function AdminStudentResultPage({
                 </h3>
 
                 <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                  Review the complete result before approving
-                  or publishing it. A returned result can be
-                  corrected by the teacher and submitted again.
+                  A saved official comment and signature are required
+                  before approval or publication. A returned result can
+                  be corrected by the teacher and submitted again.
                 </p>
+
+                {!hasOfficialSignOff && !allPublished && (
+                  <p className="mt-2 text-sm font-semibold text-amber-700">
+                    Save the official comment and signature before
+                    approving or publishing.
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-wrap gap-3">
@@ -997,7 +1075,6 @@ export default async function AdminStudentResultPage({
                       name="enrollmentId"
                       value={enrollmentId}
                     />
-
                     <input
                       type="hidden"
                       name="action"
@@ -1006,7 +1083,8 @@ export default async function AdminStudentResultPage({
 
                     <button
                       type="submit"
-                      className="rounded-xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-700"
+                      disabled={!hasOfficialSignOff}
+                      className="rounded-xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       Approve Result
                     </button>
@@ -1020,7 +1098,6 @@ export default async function AdminStudentResultPage({
                       name="enrollmentId"
                       value={enrollmentId}
                     />
-
                     <input
                       type="hidden"
                       name="action"
@@ -1043,7 +1120,6 @@ export default async function AdminStudentResultPage({
                       name="enrollmentId"
                       value={enrollmentId}
                     />
-
                     <input
                       type="hidden"
                       name="action"
@@ -1052,7 +1128,8 @@ export default async function AdminStudentResultPage({
 
                     <button
                       type="submit"
-                      className="rounded-xl border border-gray-900 bg-white px-5 py-3 text-sm font-semibold text-gray-900 transition hover:bg-gray-100"
+                      disabled={!hasOfficialSignOff}
+                      className="rounded-xl border border-gray-900 bg-white px-5 py-3 text-sm font-semibold text-gray-900 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       Publish Result
                     </button>
@@ -1090,8 +1167,7 @@ export default async function AdminStudentResultPage({
         </div>
 
         <div className="mt-6 text-center text-xs text-gray-400 print:hidden">
-          Rising Foundation Academy • Official Student Report
-          Sheet
+          Rising Foundation Academy • Official Student Report Sheet
         </div>
       </div>
     </main>
@@ -1131,9 +1207,7 @@ function SummaryCard({
         {label}
       </p>
 
-      <p className="mt-2 text-xl font-bold">
-        {value}
-      </p>
+      <p className="mt-2 text-xl font-bold">{value}</p>
     </div>
   );
 }
@@ -1147,12 +1221,51 @@ function CommentBox({
 }) {
   return (
     <div>
-      <p className="mb-2 text-sm font-semibold">
-        {label}
-      </p>
+      <p className="mb-2 text-sm font-semibold">{label}</p>
 
       <div className="min-h-28 rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm leading-6 text-gray-700">
         {value || "No comment entered yet."}
+      </div>
+    </div>
+  );
+}
+
+function PublishedResultBox({
+  published,
+  date,
+}: {
+  published: boolean;
+  date?: Date | null;
+}) {
+  return (
+    <div className="rounded-xl border border-gray-200 p-5">
+      <p className="text-sm font-semibold">Published Result</p>
+
+      {published ? (
+        <div className="mt-4 flex h-20 items-center justify-center">
+          <div
+            className="flex h-[76px] w-[76px] flex-col items-center justify-center rounded-full border-[3px] border-emerald-700 bg-emerald-50 text-center text-emerald-800 outline outline-1 outline-offset-2 outline-emerald-600"
+            aria-label="Officially approved and published"
+          >
+            <span className="text-2xl font-black leading-none">✓</span>
+            <span className="mt-1 text-[8px] font-black uppercase tracking-wider">
+              Officially
+            </span>
+            <span className="text-[9px] font-black uppercase tracking-wider">
+              Published
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-4 flex h-20 items-center text-xs text-gray-400">
+          Awaiting publication
+        </div>
+      )}
+
+      <div className="mt-3 border-t border-gray-300 pt-2">
+        <p className="text-xs text-gray-500">
+          {published ? `Published • ${formatDate(date)}` : "Not published"}
+        </p>
       </div>
     </div>
   );
@@ -1162,22 +1275,34 @@ function SignatureBox({
   label,
   signed,
   date,
+  signature,
 }: {
   label: string;
   signed: boolean;
   date?: Date | null;
+  signature?: string | null;
 }) {
   return (
     <div className="rounded-xl border border-gray-200 p-5">
-      <p className="text-sm font-semibold">
-        {label}
-      </p>
+      <p className="text-sm font-semibold">{label}</p>
 
-      <div className="mt-10 border-t border-gray-300 pt-2">
+      {signature ? (
+        <div className="mt-4 flex h-20 items-center">
+          <img
+            src={signature}
+            alt={`${label} signature`}
+            className="max-h-20 max-w-full object-contain"
+          />
+        </div>
+      ) : (
+        <div className="mt-4 flex h-20 items-center text-xs text-gray-400">
+          No signature available
+        </div>
+      )}
+
+      <div className="mt-3 border-t border-gray-300 pt-2">
         <p className="text-xs text-gray-500">
-          {signed
-            ? `Signed • ${formatDate(date)}`
-            : "Not signed"}
+          {signed ? `Signed • ${formatDate(date)}` : "Not signed"}
         </p>
       </div>
     </div>

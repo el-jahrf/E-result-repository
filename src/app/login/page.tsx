@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useActionState } from "react";
 import Link from "next/link";
+import SchoolLogo from "@/components/SchoolLogo";
 import { loginAction } from "./actions";
 
 const initialState = {
@@ -20,7 +20,6 @@ export default function LoginPage() {
       <div className="flex min-h-screen flex-col lg:flex-row">
         {/* SCHOOL BRANDING PANEL */}
         <section className="relative flex w-full flex-col overflow-hidden bg-primary lg:min-h-screen lg:w-[52%] lg:shrink-0">
-          {/* Decorative shapes */}
           <div className="pointer-events-none absolute -right-32 -top-32 h-72 w-72 rounded-full bg-secondary/40 sm:h-96 sm:w-96" />
 
           <div className="pointer-events-none absolute -bottom-32 -left-32 h-64 w-64 rounded-full border-[40px] border-accent/10 sm:-bottom-40 sm:-left-40 sm:h-[30rem] sm:w-[30rem] sm:border-[60px]" />
@@ -28,16 +27,12 @@ export default function LoginPage() {
           <div className="relative z-10 flex h-full flex-col p-5 sm:p-8 lg:min-h-screen lg:p-12 xl:p-16">
             {/* School logo and name */}
             <div className="flex items-center gap-3 sm:gap-5">
-              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-accent/70 bg-school p-0.5 shadow-xl sm:h-20 sm:w-20 sm:rounded-2xl">
-                <Image
-                  src="/school-logo.png"
-                  alt="Rising Foundation Academy logo"
-                  width={80}
-                  height={80}
-                  className="h-full w-full rounded-lg object-cover sm:rounded-xl"
-                  priority
-                />
-              </div>
+              <SchoolLogo
+                size={80}
+                priority
+                className="h-14 w-14 rounded-xl border-accent/70 bg-school p-0.5 shadow-xl sm:h-20 sm:w-20 sm:rounded-2xl"
+                imageClassName="rounded-lg object-cover sm:rounded-xl"
+              />
 
               <div className="min-w-0 pt-1">
                 <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-accent sm:text-xs sm:tracking-[0.28em]">
@@ -77,8 +72,6 @@ export default function LoginPage() {
                 activities from one secure platform.
               </p>
 
-              {/* Feature cards: hidden on very small screens to keep
-                  the school branding panel compact. */}
               <div className="mt-6 hidden max-w-xl grid-cols-3 gap-3 sm:mt-10 sm:grid">
                 {[
                   ["01", "Manage", "Students & classes"],
@@ -126,7 +119,6 @@ export default function LoginPage() {
         {/* LOGIN FORM PANEL */}
         <section className="flex w-full flex-1 items-center justify-center px-4 py-8 sm:px-8 sm:py-10 lg:w-[48%] lg:px-10 xl:px-12">
           <div className="w-full max-w-md">
-            {/* Login heading */}
             <div className="mb-7 sm:mb-9">
               <div className="mb-4 inline-flex items-center rounded-full bg-accent/30 px-3 py-1.5 sm:mb-5">
                 <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-secondary">
@@ -144,7 +136,6 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Login card */}
             <div className="school-card rounded-2xl p-5 shadow-[0_20px_60px_rgba(74,44,32,0.10)] sm:rounded-3xl sm:p-8">
               <form action={formAction} className="space-y-5">
                 {state.error && (
@@ -162,7 +153,6 @@ export default function LoginPage() {
                   </div>
                 )}
 
-                {/* Login ID */}
                 <div>
                   <label
                     htmlFor="login"
@@ -187,7 +177,6 @@ export default function LoginPage() {
                   </p>
                 </div>
 
-                {/* Password */}
                 <div>
                   <label
                     htmlFor="password"
@@ -211,7 +200,6 @@ export default function LoginPage() {
                   </p>
                 </div>
 
-                {/* Sign-in button */}
                 <button
                   type="submit"
                   disabled={pending}
@@ -229,7 +217,6 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              {/* Security information */}
               <div className="mt-7 border-t border-school pt-6">
                 <div className="flex items-start gap-3">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent/30 text-secondary">
@@ -250,7 +237,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Footer */}
             <div className="mt-6 text-center sm:mt-7">
               <p className="text-xs text-muted">
                 Rising Foundation Academy

@@ -1,9 +1,9 @@
 ﻿"use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import SchoolLogo from "@/components/SchoolLogo";
 
 const navigationItems = [
   { label: "Dashboard", href: "/admin", icon: "dashboard" },
@@ -31,24 +31,6 @@ const pagesWithExistingDesktopSidebar = [
   "/admin/results",
   "/admin/result-pins",
 ];
-
-function SchoolLogo({ size = 40 }: { size?: number }) {
-  return (
-    <span
-      className="flex shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#C8A878] bg-[#4A2C20] p-1"
-      style={{ width: size, height: size }}
-    >
-      <Image
-        src="/school-logo.png.png"
-        alt="Rising Foundation Academy logo"
-        width={size}
-        height={size}
-        priority
-        className="h-full w-full object-contain"
-      />
-    </span>
-  );
-}
 
 function Icon({ name }: { name: IconName }) {
   const common = {
@@ -236,7 +218,6 @@ export default function AdminNavigation() {
 
   return (
     <>
-      {/* Mobile header */}
       <header className="sticky top-0 z-40 flex min-h-16 items-center gap-3 border-b border-[#C8A878] bg-[#F7F1E7] px-4 shadow-sm lg:hidden">
         <button
           type="button"
@@ -287,7 +268,6 @@ export default function AdminNavigation() {
         </Link>
       </header>
 
-      {/* Backdrop */}
       {mobileMenuOpen && (
         <button
           type="button"
@@ -297,7 +277,6 @@ export default function AdminNavigation() {
         />
       )}
 
-      {/* Mobile drawer */}
       <aside
         id="mobile-admin-navigation"
         aria-label="Admin menu"
@@ -357,7 +336,6 @@ export default function AdminNavigation() {
         </div>
       </aside>
 
-      {/* Desktop sidebar */}
       {showSharedDesktopSidebar && (
         <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-[#C8A878] bg-[#F7F1E7] lg:flex">
           <Link

@@ -7,18 +7,18 @@ datasource db {
 }
 
 model User {
-  id               String     @id @default(cuid())
-  email            String     @unique
-  passwordHash     String
-  role             UserRole
-  isActive         Boolean    @default(true)
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-  signatureData    String?
-  profileCompleted Boolean    @default(false)
-  auditLogs        AuditLog[]
-  student          Student?
-  teacher          Teacher?
+  id                String     @id @default(cuid())
+  email             String     @unique
+  passwordHash      String
+  role              UserRole
+  isActive          Boolean    @default(true)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  signatureData     String?
+  profileCompleted  Boolean    @default(false)
+  auditLogs         AuditLog[]
+  student           Student?
+  teacher           Teacher?
 }
 
 model Student {
@@ -112,18 +112,21 @@ model ClassSubject {
 }
 
 model AcademicSession {
-  id                     String                  @id @default(cuid())
-  name                   String                  @unique
-  startDate              DateTime
-  endDate                DateTime
-  isCurrent              Boolean                 @default(false)
-  currentTerm            Term                    @default(FIRST)
-  createdAt              DateTime                @default(now())
-  classMasterAssignments ClassMasterAssignment[]
-  enrollments            Enrollment[]
-  results                Result[]
-  resultPins             ResultPin[]
-  TeacherAssignment      TeacherAssignment[]
+  id                       String                  @id @default(cuid())
+  name                     String                  @unique
+  startDate                DateTime
+  endDate                  DateTime
+  isCurrent                Boolean                 @default(false)
+  currentTerm              Term                    @default(FIRST)
+  firstTermResumptionDate  DateTime?
+  secondTermResumptionDate DateTime?
+  thirdTermResumptionDate  DateTime?
+  createdAt                DateTime                @default(now())
+  classMasterAssignments   ClassMasterAssignment[]
+  enrollments              Enrollment[]
+  results                  Result[]
+  resultPins               ResultPin[]
+  TeacherAssignment        TeacherAssignment[]
 }
 
 model Enrollment {
@@ -311,17 +314,18 @@ model TermSummary {
   classScoringAverage       Decimal?                @db.Decimal(5, 2)
   teacherComment            String?
   headTeacherComment        String?
+  headTeacherSignatureData  String?
   parentComment             String?
   teacherSignedAt           DateTime?
   headTeacherSignedAt       DateTime?
-  parentSignedAt             DateTime?
+  parentSignedAt            DateTime?
   nextTermDate              DateTime?
   createdAt                 DateTime                @default(now())
   updatedAt                 DateTime                @updatedAt
   classTeacherComment       String?
   classTeacherSignatureData String?
   classTeacherSignedAt      DateTime?
-  punctualityRating         Int?
+  punctualityRating         String?
   AffectiveRatingRecord     AffectiveRatingRecord[]
   Enrollment                Enrollment              @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
 }

@@ -1,11 +1,14 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
+import Link from "next/link";
 import {
   PDFDocument,
   StandardFonts,
   rgb,
 } from "pdf-lib";
+import SchoolLogo from "@/components/SchoolLogo";
 
 type Student = {
   id: string;
@@ -292,8 +295,16 @@ async function generatePinPdf(
 function Icon({
   name,
 }: {
-  name: "dashboard" | "students" | "teachers" | "classes" |
-    "subjects" | "enrollment" | "results" | "pin" | "assignments";
+  name:
+    | "dashboard"
+    | "students"
+    | "teachers"
+    | "classes"
+    | "subjects"
+    | "enrollment"
+    | "results"
+    | "pin"
+    | "assignments";
 }) {
   const common = {
     className: "h-5 w-5 shrink-0",
@@ -303,7 +314,7 @@ function Icon({
     viewBox: "0 0 24 24",
   };
 
-  const paths: Record<string, React.ReactNode> = {
+  const paths: Record<string, ReactNode> = {
     dashboard: (
       <>
         <rect x="3" y="3" width="7" height="7" rx="1" />
@@ -366,11 +377,7 @@ function Icon({
     ),
   };
 
-  return (
-    <svg {...common}>
-      {paths[name]}
-    </svg>
-  );
+  return <svg {...common}>{paths[name]}</svg>;
 }
 
 const navigation = [
@@ -694,11 +701,12 @@ export default function ResultPinsPage() {
       <div className="flex min-h-screen">
         <aside className="hidden w-64 shrink-0 flex-col border-r border-[#C8A878] bg-[#FFFCF7] lg:flex">
           <div className="flex h-20 items-center gap-3 border-b border-[#C8A878] px-5">
-            <img
-              src="/school-logo.png.png"
-              alt="Rising Foundation Academy"
-              className="h-12 w-12 rounded-lg border border-[#C8A878] bg-white object-contain"
+            <SchoolLogo
+              size={48}
+              className="rounded-lg bg-white"
+              imageClassName="object-contain"
             />
+
             <div>
               <h1 className="text-sm font-extrabold text-[#2B211C]">
                 RISING FOUNDATION
@@ -714,7 +722,7 @@ export default function ResultPinsPage() {
               const active = item.name === "Result PINs";
 
               return (
-                <a
+                <Link
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
@@ -725,7 +733,7 @@ export default function ResultPinsPage() {
                 >
                   <Icon name={item.icon} />
                   {item.name}
-                </a>
+                </Link>
               );
             })}
           </nav>
@@ -992,7 +1000,11 @@ export default function ResultPinsPage() {
                     disabled={activePins.length === 0 || exporting}
                     className="rounded-xl border border-[#C8A878] bg-[#FFFCF7] px-5 py-3 text-sm font-bold text-[#4A2C20] hover:bg-[#F7F1E7] disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {exporting ? "Creating PDF..." : `Download All Active PINs (${resultPins.filter((pin) => pin.isActive).length})`}
+                    {exporting
+                      ? "Creating PDF..."
+                      : `Download All Active PINs (${
+                          resultPins.filter((pin) => pin.isActive).length
+                        })`}
                   </button>
                 </div>
               </section>
@@ -1148,7 +1160,9 @@ export default function ResultPinsPage() {
                                   onClick={() => downloadPdf([pin], true)}
                                   className="font-bold text-[#4A2C20] hover:underline disabled:opacity-40"
                                 >
-                                  {exportingPinId === pin.id ? "Creating..." : "PDF"}
+                                  {exportingPinId === pin.id
+                                    ? "Creating..."
+                                    : "PDF"}
                                 </button>
 
                                 <button

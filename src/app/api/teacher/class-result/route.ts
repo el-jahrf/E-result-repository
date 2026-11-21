@@ -729,7 +729,11 @@ export async function POST(request: Request) {
         },
 
         update: {
-          punctualityRating,
+          punctualityRating:
+            punctualityRating === null
+              ? null
+              : String(punctualityRating),
+
           classTeacherComment,
 
           classTeacherSignatureData: signatureData,
@@ -744,7 +748,11 @@ export async function POST(request: Request) {
           id: summaryId,
           enrollmentId: enrollment.id,
 
-          punctualityRating,
+          punctualityRating:
+            punctualityRating === null
+              ? null
+              : String(punctualityRating),
+
           classTeacherComment,
 
           classTeacherSignatureData: signatureData,

@@ -181,10 +181,25 @@ export async function POST(request: Request) {
       );
     }
 
+    // Get the assigned Form Master's saved signature.
+    const teacher =
+      await prisma.teacher.findUnique({
+        where: {
+          id: teacherId,
+        },
+        select: {
+          signatureData: true,
+          signatureUrl: true,
+        },
+      });
+
+    const signatureData =
+      teacher?.signatureData ??
+      teacher?.signatureUrl ??
+      null;
+
     const opened = body.attendanceOpened;
-
     const present = body.attendancePresent;
-
     const absent = body.attendanceAbsent;
 
     if (
@@ -285,10 +300,7 @@ export async function POST(request: Request) {
     const suppliedRatings =
       body.affectiveRatings ?? [];
 
-    const ratingsMap = new Map<
-      string,
-      number
-    >();
+    const ratingsMap = new Map<string, number>();
 
     for (const rating of suppliedRatings) {
       if (
@@ -345,13 +357,32 @@ export async function POST(request: Request) {
           },
           update: {
             classTeacherComment: remark,
-            punctualityRating: punctuality,
+            punctualityRating:
+              punctuality === null
+                ? null
+                : String(punctuality),
+
+            ...(signatureData
+              ? {
+                  classTeacherSignatureData:
+                    signatureData,
+                  classTeacherSignedAt:
+                    new Date(),
+                }
+              : {}),
           },
           create: {
             id: crypto.randomUUID(),
             enrollmentId: enrollment.id,
             classTeacherComment: remark,
-            punctualityRating: punctuality,
+            punctualityRating:
+              punctuality === null
+                ? null
+                : String(punctuality),
+            classTeacherSignatureData:
+              signatureData,
+            classTeacherSignedAt:
+              signatureData ? new Date() : null,
           },
         });
 
@@ -399,6 +430,7 @@ export async function POST(request: Request) {
             attendancePercentage,
             punctualityRating: punctuality,
             affectiveItems: records.length,
+            signatureSaved: Boolean(signatureData),
           },
         },
       });
@@ -409,6 +441,7 @@ export async function POST(request: Request) {
       message:
         "Form Master assessment saved successfully.",
       attendancePercentage,
+      signatureSaved: Boolean(signatureData),
     });
   } catch (error) {
     console.error(

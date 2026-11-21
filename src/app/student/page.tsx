@@ -65,7 +65,6 @@ export default async function StudentDashboard({
             include: {
               class: true,
               session: true,
-              TermSummary: true,
             },
           },
         },
@@ -168,43 +167,77 @@ export default async function StudentDashboard({
     .filter(Boolean)
     .join(" ");
 
-  const average = Number(enrollment?.TermSummary?.average ?? 0);
-  const position = enrollment?.TermSummary?.position;
-  const positionOutOf = enrollment?.TermSummary?.positionOutOf;
-
-  const performanceRate = Number(
-    enrollment?.TermSummary?.performanceRate ?? 0,
-  );
-
   return (
     <main className="min-h-screen bg-school text-school">
-      <div className="mx-auto max-w-7xl px-6 py-8">
-        <header className="rounded-3xl bg-primary p-8 text-white shadow-lg">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-                Rising Foundation Academy
-              </p>
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+        {/* Premium Liquid Glass Welcome Header */}
+        <header className="relative isolate overflow-hidden rounded-[2rem] border border-[#C8A878]/40 bg-[#321b14] shadow-[0_20px_60px_-20px_rgba(40,20,10,0.45)]">
+          {/* Deep brown background lighting */}
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-[#76503a] via-[#4A2C20] to-[#24130f]" />
 
-              <h1 className="mt-2 text-3xl font-bold">
-                Welcome, {student.firstName}
-              </h1>
+          {/* Ambient glass reflections */}
+          <div className="pointer-events-none absolute -right-20 -top-32 -z-10 h-80 w-80 rounded-full bg-[#E8C99B]/20 blur-[90px]" />
 
-              <p className="mt-2 text-sm text-white/75">
-                Student Result Portal
-              </p>
-            </div>
+          <div className="pointer-events-none absolute -bottom-40 left-1/4 -z-10 h-80 w-80 rounded-full bg-[#A97853]/25 blur-[100px]" />
 
-            <div className="rounded-2xl bg-white/10 px-5 py-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-accent">
-                Admission Number
-              </p>
+          {/* Glossy surface */}
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-white/[0.16] via-transparent to-black/[0.18]" />
 
-              <p className="mt-1 text-lg font-bold">
-                {student.admissionNo}
-              </p>
+          <div className="relative p-6 sm:p-9 lg:p-10">
+            <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+
+            <div className="flex flex-col gap-7 md:flex-row md:items-center md:justify-between">
+              <div className="relative">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.10] px-4 py-2 shadow-inner shadow-white/10 backdrop-blur-xl">
+                  <span className="h-2 w-2 rounded-full bg-[#E5C28D] shadow-[0_0_10px_rgba(229,194,141,0.9)]" />
+
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#F2D9B3] sm:text-xs">
+                    Rising Foundation Academy
+                  </p>
+                </div>
+
+                <h1 className="mt-6 text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                  Welcome,
+                  <span className="mt-1 block bg-gradient-to-r from-white via-[#F5E3C8] to-[#D9B78D] bg-clip-text font-bold text-transparent">
+                    {student.firstName}
+                  </span>
+                </h1>
+
+                <p className="mt-4 text-sm font-medium tracking-wide text-white/65 sm:text-base">
+                  Your learning journey, all in one place.
+                </p>
+
+                <div className="mt-6 h-1 w-16 rounded-full bg-gradient-to-r from-[#E7C493] to-transparent" />
+              </div>
+
+              {/* Glass Admission Number Card */}
+              <div className="relative w-full overflow-hidden rounded-2xl border border-white/25 bg-white/[0.12] p-5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.25),0_12px_30px_rgba(0,0,0,0.12)] backdrop-blur-2xl md:max-w-[245px]">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+
+                <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-white/10 blur-2xl" />
+
+                <div className="relative">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#F0D4AD]/90">
+                    Admission Number
+                  </p>
+
+                  <p className="mt-3 break-all text-xl font-bold tracking-wide text-white sm:text-2xl">
+                    {student.admissionNo}
+                  </p>
+
+                  <div className="mt-4 flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#E7C493]" />
+                    <span className="text-xs font-medium text-white/60">
+                      Student Portal
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* Bottom glass edge */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#E5C28D]/60 to-transparent" />
         </header>
 
         <section className="school-card mt-6 p-6">
@@ -328,42 +361,14 @@ export default async function StudentDashboard({
           )}
         </section>
 
-        <section className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="mt-6">
           <div className="school-card p-6">
-            <p className="text-sm font-medium text-muted">Term</p>
+            <p className="text-sm font-medium text-muted">
+              Selected Term
+            </p>
 
             <p className="mt-2 text-2xl font-bold text-primary">
               {selectedTerm ? termLabel(selectedTerm) : "—"}
-            </p>
-          </div>
-
-          <div className="school-card p-6">
-            <p className="text-sm font-medium text-muted">
-              Student Average
-            </p>
-
-            <p className="mt-2 text-2xl font-bold text-primary">
-              {enrollment ? average.toFixed(2) : "—"}
-            </p>
-          </div>
-
-          <div className="school-card p-6">
-            <p className="text-sm font-medium text-muted">Position</p>
-
-            <p className="mt-2 text-2xl font-bold text-primary">
-              {position
-                ? `${position}${positionOutOf ? ` / ${positionOutOf}` : ""}`
-                : "—"}
-            </p>
-          </div>
-
-          <div className="school-card p-6">
-            <p className="text-sm font-medium text-muted">
-              Performance Rate
-            </p>
-
-            <p className="mt-2 text-2xl font-bold text-primary">
-              {enrollment ? `${performanceRate.toFixed(2)}%` : "—"}
             </p>
           </div>
         </section>
@@ -379,9 +384,8 @@ export default async function StudentDashboard({
             </h2>
 
             <p className="mt-2 text-sm leading-6 text-muted">
-              View your academic performance, subject scores, grades,
-              positions and teacher comments for the selected session and
-              term.
+              Your published academic result will be available after you
+              complete the school's Result PIN verification process.
             </p>
 
             {enrollment && selectedSession && selectedTerm ? (
