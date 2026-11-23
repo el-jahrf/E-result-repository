@@ -87,6 +87,7 @@ export default async function StudentResultsPage({
     ) ??
     availableSessions[0];
 
+  // Get available terms directly from the Enrollment records.
   const availableTerms: Term[] = selectedSession
     ? Array.from(
         new Set(
@@ -95,15 +96,10 @@ export default async function StudentResultsPage({
               (enrollment) =>
                 enrollment.sessionId === selectedSession.id,
             )
-            .flatMap((enrollment) => {
-              const summary = Array.isArray(enrollment.TermSummary)
-                ? enrollment.TermSummary[0]
-                : enrollment.TermSummary;
-
-              return summary?.term ? [summary.term as Term] : [];
-            }),
+            .map((enrollment) => enrollment.term as Term)
+            .filter((term) => VALID_TERMS.includes(term)),
         ),
-      ).filter((term) => VALID_TERMS.includes(term))
+      )
     : [];
 
   const selectedTerm: Term =
@@ -111,17 +107,12 @@ export default async function StudentResultsPage({
       ? (requestedTerm as Term)
       : availableTerms[0] ?? "FIRST";
 
-  const selectedEnrollment = student.enrollments.find((enrollment) => {
-    if (enrollment.sessionId !== selectedSession?.id) {
-      return false;
-    }
-
-    const summary = Array.isArray(enrollment.TermSummary)
-      ? enrollment.TermSummary[0]
-      : enrollment.TermSummary;
-
-    return summary?.term === selectedTerm;
-  });
+  // Match the actual enrollment by session and its own term field.
+  const selectedEnrollment = student.enrollments.find(
+    (enrollment) =>
+      enrollment.sessionId === selectedSession?.id &&
+      enrollment.term === selectedTerm,
+  );
 
   const cookieStore = await cookies();
   const pinCookie = cookieStore.get("result_pin_access")?.value;
